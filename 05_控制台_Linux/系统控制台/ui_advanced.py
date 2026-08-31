@@ -854,7 +854,7 @@ systemctl restart thermal-guard"""
             ("电池温度模块注册（DKMS，内核升级后自动重建）",
              "sudo bash 性能优化方案_20260822/acer-wmi-battery_源码备份/register_dkms.sh"),
             ("真值采集（核对系统实际状态）",
-             "sudo bash 05_控制台_Linux/系统控制台_最新_20260822/backend/collect_ground_truth.sh"),
+             "sudo bash 05_控制台_Linux/系统控制台/backend/collect_ground_truth.sh"),
         ]
         dlg = Gtk.Dialog(title="高级工具（高风险操作）", transient_for=self.get_toplevel(),
                          modal=True, default_width=640, default_height=420)

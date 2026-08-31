@@ -22,7 +22,7 @@
 #
 # 用法: sudo bash register_dkms.sh
 # 前置: 按项目铁律 L1（系统级修改前必须快照），建议先执行：
-#       sudo bash 系统控制台_最新_20260822/backend/snapshot.sh create "DKMS注册前"
+#       sudo bash 系统控制台/backend/snapshot.sh create "DKMS注册前"
 #
 # 环境已确认就绪（2026-08-29 核验）：
 #   · /usr/src/linux-headers-7.0.0-30-generic 存在

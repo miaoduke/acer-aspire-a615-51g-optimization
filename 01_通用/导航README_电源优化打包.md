@@ -21,7 +21,7 @@
 │   ├── 性能优化方案_20260822\         ⭐ Linux 核心大本营 (交接手册/SOP/脚本/会话备份)
 │   │     └── 00_交接手册_重装后启动.md  ← Linux 单一事实源入口
 │   ├── Linux对比_20260812\            bench 二进制+日志+对比图
-│   └── 系统控制台_最新_20260822\      Linux 版控制台源码 (GTK3)
+│   └── 系统控制台\      Linux 版控制台源码 (GTK3)
 └── 共享_20260825\                     ← 双端共享
     ├── 系统控制台方案_20260825\       ⭐ 方案文档 01-12 + MANIFEST + 证据存档
     └── 报告_20260818\                 早期报告 (对比/离电/降压/使用说明)
@@ -66,7 +66,7 @@
 - **PL1/PL2 = 25W/25W**（实测回读 ✅） | **降压 -80mV**（实测 -80.08mV） | **Turbo ON**
 - **C-state = max_cstate=4** | **GPU = intel 集显**
 - 服务: cpu-power-limit / turbo-enable / **undervolt**（+ undervolt-resume）/ **uv-safeguard**（异常关机回退 -50mV）/ acdc-profile / thermal-guard / rasdaemon
-- 复测命令: `sudo bash Linux_20260825/系统控制台_最新_20260822/backend/collect_ground_truth.sh`
+- 复测命令: `sudo bash Linux_20260825/系统控制台/backend/collect_ground_truth.sh`
 - ⏳ **观察期 3-5 天**：-105mV 当年是"验证通过"后数天才死机。留意 `dmesg | grep -ci mce`；
   若出现 `/var/log/uv_safeguard.triggered` 说明已自动回退。
 

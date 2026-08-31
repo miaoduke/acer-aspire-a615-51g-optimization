@@ -1,6 +1,6 @@
 # ⚠️ 数据过时（2026-08-29 审计）：本表为 2026-08-12 前后采集，kernel 6.14.0-37 / PL1=15W / PL2=44W / microcode 0xf6 均已变更。
 # 现状：kernel 7.0.0-29、PL1=PL2=25W/25W。本表仅作硬件规格（型号/参数范围）参考，勿作为当前调优依据。
-# 定案方法：sudo bash ../系统控制台_最新_20260822/backend/collect_ground_truth.sh
+# 定案方法：sudo bash ../系统控制台/backend/collect_ground_truth.sh
 部件,型号,规格,当前值,允许范围,状态备注
 CPU,Intel Core i5-8250U,4C8T 1.6-3.4GHz,family=6 model=142 stepping=10,microcode=0xf6,正常
 CPU_PL1,长时功耗墙,15W,当前=15000000,最大=28000000,⚠️可提升至25-28W

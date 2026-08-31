@@ -3,7 +3,7 @@
 #        ②"添加 intel_pstate=active mitigations=off" → 实测 mitigations 仅 +2-4%，已否决关闭
 #        ③"GRUB 无性能参数" → 现已为 max_cstate=6 zswap.enabled=1 zswap.shrinker_enabled=1
 #        ④ 温度与电池健康度均为换脂(PTM7950)前数值，不可比对
-# 定案方法：sudo bash ../系统控制台_最新_20260822/backend/collect_ground_truth.sh
+# 定案方法：sudo bash ../系统控制台/backend/collect_ground_truth.sh
 参数,当前值,说明,优化建议
 内核版本,6.14.0-37-generic,最新,保持
 GRUB默认,"quiet splash",无性能参数,"添加intel_pstate=active mitigations=off"
