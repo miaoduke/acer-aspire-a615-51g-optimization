@@ -536,7 +536,7 @@ bench_once 双重 sudo / **充电曲线浮充污染** / （另有 0831 上午审
 | 占位符 | 被替换的真实值 | 说明 |
 |---|---|---|
 | `<USER>` | 原 Linux 用户名 / Windows 用户名 | `/home/<USER>`、`/media/<USER>`、`C:\Users\<USER>` |
-| `<HOSTNAME>` | 原主机名 | `hackdale-Aspire-A615-51G` |
+| `<HOSTNAME>` | 原主机名 | 已脱敏，替换为你机器的主机名 |
 | `<WIN_C_UUID>` | Windows C 盘分区 UUID | 用于 fstab 挂载示例，替换为你的实际 UUID |
 
 > 脱敏范围覆盖 22 个源码/文档/desktop 文件的硬编码路径与标识；`$(hostname)` 等**动态**取值脚本原样保留（运行时会自动获取本机值）。系统日志、`opencode` 会话库、OS 厂商/OEM 产物等一律不进入本仓库（见 `.gitignore`）。
