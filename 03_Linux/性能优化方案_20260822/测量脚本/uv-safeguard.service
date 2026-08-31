@@ -1,0 +1,13 @@
+[Unit]
+Description=Undervolt safeguard - revert to safe value after abnormal shutdown
+After=multi-user.target
+# 必须在 undervolt.service 之后运行，否则会被其覆盖
+After=undervolt.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/uv_safeguard.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

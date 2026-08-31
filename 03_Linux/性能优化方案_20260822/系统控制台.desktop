@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=系统控制台
+Comment=Acer 电源与散热控制台
+Exec=/home/<USER>/桌面/系统控制台/start.sh
+Icon=utilities-system-monitor
+Terminal=false
+Categories=Utility;System;

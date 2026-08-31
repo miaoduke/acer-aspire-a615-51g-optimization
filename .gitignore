@@ -1,0 +1,62 @@
+# ===== 不可公开: 第三方专有二进制 / 无许可 DLL / 编译产物 / opencode 会话与临时数据 / 系统日志 / 个资 =====
+
+# ---- opencode 工具（AI 会话数据库 / 项目记忆 / 依赖）----
+.opencode/
+opencode.json
+opencode_data/
+*.db
+*.db-wal
+*.db-shm
+opencode_会话导出.md
+
+# ---- 系统日志 / 快照 / session（含主机名/MAC/IP/USB/SSID）----
+99_存档_只读/
+system_logs/
+session/
+会话备份/
+*.log
+journalctl_*.log
+dmesg*.log
+reboot_history.log
+services_status.txt
+
+# ---- 第三方专有软件本体 / 编译产物 / 二进制 ----
+02_Win/ThrottleStop_20260811/
+PowerSettingsExplorer.exe
+ThrottleStop.exe
+SysConsole.exe
+SysConsoleDebug.exe
+*.dll
+*.exe
+
+# ---- 电池报告 / 硬件截图 / 电源转储（个资）----
+batteryreport_*.html
+BatteryReport_*.html
+*.png
+*.jpg
+*.html
+*_FullDump.txt
+AllHiddenSettings_Dump.txt
+
+# 例外：公开用途的捐赠/赞助收款码图片（README 直接展示）
+!assets/
+!assets/donate_wechat.jpg
+!assets/donate_alipay.jpg
+
+# ---- 第三方内核模块 GPL 源码备份 保留但独立声明目录暂不入 git 顶层（git 层单独处理）----
+# （acer-wmi-battery_源码备份 保留公开，见 docs 说明）
+
+# ===== 运行时产物 / 编辑器 =====
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 归档副本（与主版本重复，不同步公开）=====
+系统控制台_latest/

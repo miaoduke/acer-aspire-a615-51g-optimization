@@ -1,0 +1,2 @@
+时间戳,状态,供电,电池%,轮1温度,轮2温度,Governor,EPP,PL1W,PL2W,平均万/s,轮1万/s,轮2万/s
+2026-08-12_22:57,mitigations=Mitigation:,AC,100,60.000->91.000,61.000->70.000,powersave,balance_performance,15,44000000,1218.0,1244.1,1192.0

@@ -1,0 +1,54 @@
+=== Windows 系统控制台 采集自检 ===
+时间: 2026-08-28 15:37:19
+
+[CPU] 总利用率: 18.4%
+      核心0: 32.7%
+      核心1: 16.3%
+      核心2: 24.3%
+      核心3: 11.4%
+      核心4: 20.5%
+      核心5: 14.9%
+      核心6: 19.4%
+      核心7: 8.8%
+[内存] 已用 6138 MB / 12163 MB (50.0%)
+[GPU] 3D 利用率: 1.4%
+[磁盘] _Total 繁忙: 0.2% | 速率: 110 KB/s
+[网络] Realtek PCIe GbE Family Controller: ↓0.0 ↑0.0 KB/s
+[网络] Qualcomm Atheros QCA9377 Wireless Network Adapter: ↓0.1 ↑0.1 KB/s
+[电池] 100% | 已接通电源 | OS剩余估计: 未知
+[温度区] 需要管理员权限
+[开机时长] 0天 05:58:10
+[电源计划] 当前: 高性能
+     平衡  (0ba71e37-09c0-45d0-a5f7-e6ed0c28ab8d)
+     静音  (3c5f9931-ebbc-48cd-9e0d-35841dbc7b4d)
+   * 高性能  (cb687381-cdf4-40a4-97b2-0dc8482733d1)
+     省电  (d3ddbb5a-2e90-4542-95d2-503ab049fc9a)
+[权限] 管理员运行: 否
+[LHM] LibreHardwareMonitor: 未启用 — 原因: 需要管理员权限
+[独显] NVIDIA GeForce MX150 | 利用率 0% | 显存 0 MB | 温度 46°C | 功耗 ?W
+[CPU频率] 3017 MHz / 1800 MHz 最大
+[电池深度] 温度=-- | 电压=-- | 健康度=-- | 
+[充电阶段] --
+[健康趋势] 斜率=0.0000 %/天
+[服务] 7 个已检查
+  Running    打印队列 (Spooler)
+  Running    Windows Search (WSearch)
+  Running    主题 (Themes)
+  Stopped    Windows Defender (WinDefend)
+  Stopped    Windows Update (wuauserv)
+  Running    任务计划 (Schedule)
+  Running    DHCP Client (Dhcp)
+[启动项] 4 个
+  [用户] IDMan
+  [用户] Steam
+  [用户] GameViewer
+  [用户] MicrosoftEdgeAutoLaunch_7DE05FBF451608EFA525D6CE3B1E522D
+[进程排行] 15 个
+[告警逻辑] 低电触发=True/冷却抑制=True/高温触发=True/阈值以下=True → PASS
+[设置回环] PASS
+[自启动注册表] 写入=True/清除=True → PASS
+[负载建议] 电池高负载触发=True/插电抑制=True/低负载抑制=True/冷却抑制=True → PASS
+[电池报告] 生成降级(energy.dll 非交互限制) → SKIP
+[进程API] 启动/读内存=True/等待退出=True
+
+SELFTEST: PASS

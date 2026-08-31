@@ -1,0 +1,37 @@
+﻿=== Windows 系统控制台 采集自检 ===
+时间: 2026-08-23 08:32:29
+
+[CPU] 总利用率: 19.5%
+      核心0: 20.9%
+      核心1: 15.5%
+      核心2: 22.4%
+      核心3: 15.5%
+      核心4: 22.9%
+      核心5: 18.5%
+      核心6: 22.9%
+      核心7: 17.5%
+[内存] 已用 7298 MB / 12163 MB (60.0%)
+[GPU] 3D 利用率: 3.9%
+[磁盘] _Total 繁忙: 4.4% | 速率: 2981 KB/s
+[网络] Realtek PCIe GbE Family Controller: ↓0.0 ↑0.0 KB/s
+[网络] Qualcomm Atheros QCA9377 Wireless Network Adapter: ↓0.1 ↑0.2 KB/s
+[电池] 99% | 已接通电源 | OS剩余估计: 未知
+[温度区] 需要管理员权限
+[开机时长] 0天 00:50:22
+[电源计划] 当前: 高性能
+     平衡  (0ba71e37-09c0-45d0-a5f7-e6ed0c28ab8d)
+     静音  (3c5f9931-ebbc-48cd-9e0d-35841dbc7b4d)
+   * 高性能  (cb687381-cdf4-40a4-97b2-0dc8482733d1)
+     省电  (d3ddbb5a-2e90-4542-95d2-503ab049fc9a)
+[权限] 管理员运行: 否
+[LHM] LibreHardwareMonitor: 未启用(需管理员权限或缺少 LibreHardwareMonitorLib.dll)
+[独显] NVIDIA GeForce MX150 | 利用率 2% | 显存 0 MB | 温度 49°C | 功耗 ?W
+[告警逻辑] 低电触发=True/冷却抑制=True/高温触发=True/阈值以下=True → PASS
+[设置回环] PASS
+[自启动注册表] 写入=True/清除=True → PASS
+[电池报告] 生成成功 45673 字节 → PASS
+[进程API] 启动/读内存=True/等待退出=True
+
+SELFTEST: PASS
+
+已写入: I:\AItest\电源优化打包_20260817\系统控制台Win_20260823\selftest_result.txt

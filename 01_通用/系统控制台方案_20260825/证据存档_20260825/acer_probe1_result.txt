@@ -1,0 +1,13 @@
+﻿=== Acer WMI 只读探测 13:16:00 ===
+管理员: True
+实例: Active=True InstanceName=ACPI\PNP0C14\APGe_0
+GetGamingProfile(1) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingFanBehavior(0) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingFanSpeed(0) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingFanBehavior(1) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingFanSpeed(1) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingFanBehavior(2) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingFanSpeed(2) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetGamingProfileSetting(1) 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+GetBattInfoInterface 失败: 使用“3”个参数调用“InvokeMethod”时发生异常:“无效的方法参数 ”
+类 BatteryControl [GetBattInfoInterface]

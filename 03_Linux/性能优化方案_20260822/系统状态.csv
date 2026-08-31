@@ -1,0 +1,29 @@
+# ⚠️ 数据过时（2026-08-29 审计）：本表为 2026-08-12 前后采集，多条建议已被后续实测推翻。
+# 已推翻：①"建议安装 TLP 替代 PPD" → TLP 已明确排除，控制台完全接管（PPD masked）
+#        ②"添加 intel_pstate=active mitigations=off" → 实测 mitigations 仅 +2-4%，已否决关闭
+#        ③"GRUB 无性能参数" → 现已为 max_cstate=6 zswap.enabled=1 zswap.shrinker_enabled=1
+#        ④ 温度与电池健康度均为换脂(PTM7950)前数值，不可比对
+# 定案方法：sudo bash ../系统控制台_最新_20260822/backend/collect_ground_truth.sh
+参数,当前值,说明,优化建议
+内核版本,6.14.0-37-generic,最新,保持
+GRUB默认,"quiet splash",无性能参数,"添加intel_pstate=active mitigations=off"
+CPU调速器,powersave,默认,performance(AC) / powersave(BAT)
+EPP,balance_performance,PPD控制,performance(AC) / balance_power(BAT)
+CPU频率范围,400-3400MHz,正确,保持
+HWP状态,active,硬件P状态,保持
+intel_pstate状态,active,驱动模式,保持
+thermald,active(running),温控守护,⚠️可能过度降频→建议禁用
+power-profiles-daemon,active,电源档位管理,与TLP二选一
+TLP,未安装,电源管理,建议安装替代PPD
+NVIDIA驱动,580.173.02,CUDA13.0,正常
+NVIDIA持久模式,off,未启用,建议开启
+USB自动挂起,部分开启(2/2/2/0/0),节能,建议全部禁用
+磁盘调度器,mq-deadline(SSD),I/O调度,正常
+磁盘预读,128KB,正常,保持
+Swap,4GB zram,压缩交换,正常
+后台负载(测试时),Firefox30%+OpenCode25%+mintinstall8%,高,⚠️测试时应关闭
+Spectre缓解,全部开启,安全,⚠️关闭可+5-10%性能
+电池健康,83.1%,衰减17%,不可逆→优化续航更重
+AC适配器,在线,94%充电中,正常
+空闲温度,63°C(封装),偏高,清灰可降至50-55°C
+满载温度,86°C(AC),过高,清灰+硅脂可降至72-78°C

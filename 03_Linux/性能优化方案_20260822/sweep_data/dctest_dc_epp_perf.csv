@@ -1,0 +1,5 @@
+phase,epp,round,total,吞吐万s,W,起温,终温,ac_online,batt_pct
+dc_epp_perf,performance,1,287848442,1439.2,15.0,67.000,84.000,0,94
+dc_epp_perf,performance,2,283072271,1415.4,15.0,67.000,86.000,0,91
+dc_epp_perf,performance,3,283915629,1419.6,15.0,64.000,83.000,0,83
+dc_epp_perf,performance,4,282380865,1411.9,15.0,66.000,83.000,0,76

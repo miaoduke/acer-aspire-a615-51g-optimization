@@ -1,0 +1,19 @@
+编号,类别,标题,URL,关键信息,可靠性
+1,工具,throttled (erpalma),github.com/erpalma/throttled,"PL1/PL2动态覆盖,降压,EC绕过",★★★★★
+2,工具,intel-undervolt,github.com/georgewhewell/undervolt,"CPU降压,PL调整,HWP hint",★★★★★
+3,文档,Linux Kernel intel_pstate,kernel.org/doc/html/latest/admin-guide/pm/intel_pstate.html,"HWP/EPP/sysfs官方文档",★★★★★
+4,文档,Intel RAPL接口,man7.org/linux/man-pages/man8/x86_energy_perf_policy.8.html,"功耗限制sysfs接口",★★★★★
+5,数据,i5-8250U PL1/PL2规格,notebookcheck.net/Intel-Core-i5-8250U,"Tau≈28s, PL2≈44W",★★★★☆
+6,社区,Acer A515-51G BIOS Mod,bios-mods.com/forum,"BIOS解锁/风扇控制/PL1提升",★★★☆☆
+7,工具,NBFC风扇控制,github.com/hirschmann/nbfc,"EC: ENE KB9022Q, 风扇曲线",★★★☆☆
+8,文档,TLP电源管理,linrunner.de/tlp,"Linux精细电源管理",★★★★★
+9,文档,thermald温控,github.com/intel/thermal_daemon,"CPU温控守护进程",★★★★☆
+10,分析,i5-8250U PL1深度分析,blog.silverpc.hu,"功耗墙机制详解",★★★★☆
+11,社区,AskUbuntu i5-8250U优化,askubuntu.com,"社区实践经验汇总",★★★☆☆
+12,社区,Tom's Hardware论坛,forums.tomshardware.com,"ThrottleStop/降压讨论",★★★☆☆
+13,文档,Intel CPU产品规格,intel.com/content/www/us/en/products,"i5-8250U官方规格",★★★★★
+14,社区,Acer Community BIOS,a community.acer.com,"Acer BIOS TDP设置讨论",★★★☆☆
+15,工具,linux-tools (turbostat),kernel.org,"CPU功耗/频率监控",★★★★★
+16,社区,Thinkpad T480降压修复,github.com/dipch,"同代CPU降压参考",★★★★☆
+17,文档,Linux CPUFreq文档,docs.kernel.org/admin-guide/pm/cpufreq.html,"CPU频率缩放官方文档",★★★★★
+18,社区,erpalma throttled issues,github.com/erpalma/throttled/issues,"i5-8250U限流问题讨论",★★★★☆

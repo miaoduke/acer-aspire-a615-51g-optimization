@@ -1,0 +1,26 @@
+# ⚠️ 数据过时（2026-08-29 审计）：本表为 2026-08-12 前后采集，kernel 6.14.0-37 / PL1=15W / PL2=44W / microcode 0xf6 均已变更。
+# 现状：kernel 7.0.0-29、PL1=PL2=25W/25W。本表仅作硬件规格（型号/参数范围）参考，勿作为当前调优依据。
+# 定案方法：sudo bash ../系统控制台_最新_20260822/backend/collect_ground_truth.sh
+部件,型号,规格,当前值,允许范围,状态备注
+CPU,Intel Core i5-8250U,4C8T 1.6-3.4GHz,family=6 model=142 stepping=10,microcode=0xf6,正常
+CPU_PL1,长时功耗墙,15W,当前=15000000,最大=28000000,⚠️可提升至25-28W
+CPU_PL2,短时功耗墙,44W,当前=44000000,最大=44000000,已达上限
+CPU_Tau,Turbo时间窗口,28秒,当前=27983872us,正常
+CPU_HWP,硬件P状态,支持,enabled,正常
+CPU_EPP,能效偏好,performance/balance_power,0x00-0xFF,正常
+GPU_Intel,UHD Graphics 620,共享内存,i915驱动,正常
+GPU_NVIDIA,GeForce MX150,2GB GDDR5,驱动580.173.02 CUDA13.0,正常
+GPU_NVIDIA_TDP,功耗限制,~25W,显示5001W(VBIOS未报告),正常
+GPU_NVIDIA_Temp,温度,61°C,P0状态,正常
+RAM,DDR4,12GB,~11GiB可用,可能非对称双通道
+SSD,WDC WDS240G2G0B,240GB SATA,mq-deadline调度器,正常
+HDD,WDC WD10SPZX,1TB 5400RPM,机械硬盘,慢
+Battery,LG Li-ion,3220mAh(设计),当前2675mAh(83.1%),⚠️衰减17%
+Battery_Cycles,循环次数,0,可能是计数器未工作,需确认
+WiFi,Intel AC(推测),5GHz 802.11ac,power_management=on,⚠️可能降速
+Display,eDP,1920x1080 60Hz,正常
+BIOS,Insyde H2O,v2.02,高级菜单被锁,风扇不可调
+Thermal_Package,封装温度,63°C(idle),crit=100°C,正常
+Thermal_Core0-3,核心温度,60-63°C(idle),正常
+Thermal_ACPI,ACPI温区,27.8/29.8°C,正常
+CPU_Vulnerabilities,Spectre/Meltdown,全部已缓解,mitigated,⚠️消耗5-10%性能

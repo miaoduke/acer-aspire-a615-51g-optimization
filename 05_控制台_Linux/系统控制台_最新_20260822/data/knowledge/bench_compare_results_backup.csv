@@ -1,0 +1,11 @@
+13:31,UV_ref75,AC,100,powersave,balance_performance,15,15,ON,-75,3轮中位,,1406.3,67.000,87.000
+13:34,UV_m80,AC,100,powersave,balance_performance,15,15,ON,-80,3轮中位,,1420.6,68.000,90.000
+13:39,UV_m90,AC,100,powersave,balance_performance,15,15,ON,-90,3轮中位,,1433.1,68.000,87.000
+13:42,UV_m100,AC,100,powersave,balance_performance,15,15,ON,-100,3轮中位,,1471.2,67.000,86.000
+13:48,UV_m100b,AC,100,powersave,balance_performance,15,15,ON,-100,5轮中位,,1468.4,68.000,86.000
+13:55,UV_m105,AC,100,powersave,balance_performance,15,15,ON,-105,5轮中位,,1468.7,67.000,89.000
+14:00,UV_m110,AC,100,powersave,balance_performance,15,15,ON,-110,5轮中位,,1481.6,68.000,89.000
+14:07,UV_m115,AC,100,powersave,balance_performance,15,15,ON,-115,5轮中位,,1486.0,68.000,86.000
+15:23,UV_m105_r2,AC,100,powersave,balance_performance,15,15,ON,-105,10轮,med=1486.2,sd=13.48,,1482.04,,
+15:32,UV_m115_r2,AC,100,powersave,balance_performance,15,15,ON,-115,10轮,med=1488.8,sd=2.32,,1488.72,,
+16:12,UV_m105_final,AC,100,powersave,balance_performance,15,15,ON,-105,9轮,med=1419.0,sd=38.53,,1430.13,,

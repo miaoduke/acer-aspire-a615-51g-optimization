@@ -1,0 +1,15 @@
+[Unit]
+Description=Undervolt stability daily check (daily at 10:00)
+# 观察期专用：每天检查一次降压稳定性（MCE / 降压值 / 异常关机 / 服务状态）
+
+[Timer]
+# 每天 10:00 运行；错过则开机后 5 分钟补跑（Persistent 保证不漏检）
+OnCalendar=*-*-* 10:00:00
+Persistent=true
+# 开机后 3 分钟额外跑一次，便于及时发现夜间异常
+OnBootSec=3min
+# 随机延迟最多 2 分钟，避免与其他 timer 同时触发
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,230 @@
+﻿ActiveScheme: 电源方案 GUID: cb687381-cdf4-40a4-97b2-0dc8482733d1  (高性能)
+
+== @C:\WINDOWS\system32\powrprof.dll,-301,Hard disk (0012ee47-9041-4b5d-9b77-535fba8b1442) ==
+  H 0b2d69d7 | AHCI Link Power Management - HIPM/DIPM | AC=- DC=-
+  H 51dea550 | @C:\WINDOWS\system32\powrprof.dll,-313,Maximum Power Level | AC=- DC=-
+  . 6738e2c4 | @C:\WINDOWS\system32\powrprof.dll,-303,Turn off hard disk after | AC=- DC=-
+  H 80e3c60e | @C:\WINDOWS\system32\powrprof.dll,-311,Hard disk burst ignore time | AC=- DC=-
+  H d3d55efd | Secondary NVMe Idle Timeout | AC=- DC=-
+  H d639518a | Primary NVMe Idle Timeout | AC=- DC=-
+  H dab60367 | AHCI Link Power Management - Adaptive | AC=- DC=-
+  H dbc9e238 | Secondary NVMe Power State Transition Latency Tolerance | AC=- DC=-
+  H fc7372b6 | @C:\WINDOWS\system32\powrprof.dll,-315,NVMe NOPPME | AC=- DC=-
+  H fc95af4d | Primary NVMe Power State Transition Latency Tolerance | AC=- DC=-
+
+== @C:\WINDOWS\system32\mshtml.dll,-2400;SubgroupName (02F815B5-A5CF-4C84-BF20-649D1F75D3D8) ==
+  . 4c793e7d | @C:\WINDOWS\system32\mshtml.dll,-2402;TimerSettingName | AC=- DC=-
+
+== @C:\WINDOWS\System32\stobject.dll,-408,SubGroupName (0d7dbae2-4294-402a-ba8e-26777e8488cd) ==
+  . 309dce9b | @C:\WINDOWS\System32\stobject.dll,-410,PowerSettingName | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-103,Require a password on wakeup (0e796bdb-100d-47d6-a2d5-f7d2daa51f51) ==
+  . DefaultP | DefaultPowerSchemeValues | AC=- DC=-
+
+== @C:\WINDOWS\system32\wlansvc.dll,-4097 (19cbb8fa-5279-450e-9fac-8a3d5fedd0c1) ==
+  . 12bbebe6 | @C:\WINDOWS\system32\wlansvc.dll,-4099 | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-120,Sleep (238c9fa8-0aad-41ed-83f4-97be242c8f20) ==
+  H 1a34bdc3 | @C:\WINDOWS\system32\powrprof.dll,-1501,Legacy RTC mitigations | AC=- DC=-
+  H 25dfa149 | @C:\WINDOWS\system32\powrprof.dll,-551,Allow Away Mode Policy | AC=- DC=-
+  . 29f6c1db | @C:\WINDOWS\system32\powrprof.dll,-105,Sleep after | AC=- DC=-
+  H 7bc4a2f9 | @C:\WINDOWS\system32\powrprof.dll,-129,System unattended sleep timeout | AC=- DC=-
+  . 94ac6d29 | @C:\WINDOWS\system32\powrprof.dll,-109,Allow hybrid sleep | AC=- DC=-
+  . 9d7815a6 | @C:\WINDOWS\system32\powrprof.dll,-107,Hibernate after | AC=- DC=-
+  H a4b195f5 | @C:\WINDOWS\system32\powrprof.dll,-561,Allow system required policy | AC=- DC=-
+  H abfc2519 | @C:\WINDOWS\system32\powrprof.dll,-122,Allow Standby States | AC=- DC=-
+  . bd3b718a | @C:\WINDOWS\system32\powrprof.dll,-125,Allow wake timers | AC=- DC=-
+  H d4c1d4c8 | @C:\WINDOWS\system32\wkssvc.dll,-104,Allow sleep with remote opens | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-101,Power plan type (245d8541-3943-4422-b025-13a784f679b7) ==
+  . DefaultP | DefaultPowerSchemeValues | AC=- DC=-
+
+== @C:\WINDOWS\system32\usbui.dll,-1200;UsbPowerSettingsName (2a737441-1930-4402-8d77-b2bebba308a3) ==
+  H 0853a681 | Hub Selective Suspend Timeout | AC=- DC=-
+  . 48e6b7a6 | @C:\WINDOWS\system32\usbui.dll,-1202;UsbPowerSelSupName | AC=- DC=-
+  H 498c044a | Setting IOC on all TDs | AC=- DC=-
+  H d4e98f31 | USB 3 Link Power Mangement | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-1001,Idle Resiliency (2e601130-5351-4d9d-8e04-252966bad054) ==
+  H 3166bc41 | @C:\WINDOWS\system32\powrprof.dll,-1007,Execution Required power request timeout | AC=- DC=-
+  H c36f0eb4 | @C:\WINDOWS\system32\powrprof.dll,-1005,IO coalescing timeout | AC=- DC=-
+  H c42b79aa | @C:\WINDOWS\system32\powrprof.dll,-1003,Processor Idle Resiliency Timer Resolution | AC=- DC=-
+  H d502f7ee | @C:\WINDOWS\system32\powrprof.dll,-1009,Deep Sleep Enabled/Disabled | AC=- DC=-
+
+== 英特尔(R) 显卡设置 (44f3beca-a7c0-460e-9df2-bb8b99e0cba6) ==
+  . 3619c3f2 | 英特尔(R) 显卡电源计划 | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-1111,Interrupt Steering Settings (48672f38-7a9a-4bb2-8bf8-3d85be19de4e) ==
+  H 2bfc24f9 | @C:\WINDOWS\system32\powrprof.dll,-1113,Interrupt Steering Mode | AC=- DC=-
+  H 73cde64d | @C:\WINDOWS\system32\powrprof.dll,-1125,Target Load | AC=- DC=-
+  H d6ba4903 | @C:\WINDOWS\system32\powrprof.dll,-1128,Unparked time trigger | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-251,Power buttons and lid (4f971e89-eebd-4455-a8de-9e59040e7347) ==
+  H 5ca83367 | @C:\WINDOWS\system32\powrprof.dll,-257,Lid close action | AC=0 DC=0
+  H 7648efa3 | @C:\WINDOWS\system32\powrprof.dll,-253,Power button action | AC=0 DC=0
+  H 833a6b62 | @C:\WINDOWS\system32\powrprof.dll,-901,Enable forced button/lid shutdown | AC=- DC=-
+  H 96996bc0 | @C:\WINDOWS\system32\powrprof.dll,-255,Sleep button action | AC=0 DC=0
+  H 99ff10e7 | @C:\WINDOWS\system32\powrprof.dll,-261,Lid open action | AC=- DC=-
+  . a7066653 | @C:\WINDOWS\system32\powrprof.dll,-259,Start menu power button | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-151,Device idle policy (4faab71a-92e5-4726-b531-224559672d19) ==
+  . DefaultP | DefaultPowerSchemeValues | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-601,PCI Express (501a4d13-42af-4429-9fd1-a8218c268e20) ==
+  . ee12f906 | @C:\WINDOWS\system32\powrprof.dll,-603,Link State Power Management | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-351,Processor power management (54533251-82be-4824-96c1-47b60b740d00) ==
+  H 06cadf0e | @C:\WINDOWS\system32\powrprof.dll,-377,Processor performance increase threshold | AC=- DC=-
+  H 06cadf0e | @C:\WINDOWS\system32\powrprof.dll,-1217,Processor performance increase threshold for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 0cc5b647 | @C:\WINDOWS\system32\powrprof.dll,-767,Processor performance core parking min cores | AC=- DC=-
+  H 0cc5b647 | @C:\WINDOWS\system32\powrprof.dll,-1225,Processor performance core parking min cores for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 12a0ab44 | @C:\WINDOWS\system32\powrprof.dll,-379,Processor performance decrease threshold | AC=- DC=-
+  H 12a0ab44 | @C:\WINDOWS\system32\powrprof.dll,-1215,Processor performance decrease threshold for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 12fd031f | @C:\WINDOWS\system32\powrprof.dll,-1763,Hybrid containment zone important utility percentage | AC=- DC=-
+  H 1a98ad09 | @C:\WINDOWS\system32\powrprof.dll,-1758,Processor Restriction Count | AC=- DC=-
+  H 1facfc65 | @C:\WINDOWS\system32\powrprof.dll,-1241,Initial performance for Processor Power Efficiency Class 1 when unparked | AC=- DC=-
+  H 2430ab6f | @C:\WINDOWS\system32\powrprof.dll,-797,Processor performance core parking concurrency threshold | AC=- DC=-
+  H 2ddd5a84 | @C:\WINDOWS\system32\powrprof.dll,-769,Processor performance core parking increase time | AC=- DC=-
+  H 36687f9e | @C:\WINDOWS\system32\powrprof.dll,-812,Processor energy performance preference policy | AC=0 DC=84
+  H 36687f9e | @C:\WINDOWS\system32\powrprof.dll,-1245,Processor energy performance preference policy for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 36687f9e | @C:\WINDOWS\system32\powrprof.dll,-1323,Processor energy performance preference policy for Processor Power Efficiency Class 2 | AC=- DC=-
+  H 3b04d4fd | @C:\WINDOWS\system32\powrprof.dll,-381,Allow Throttle States | AC=- DC=-
+  H 4009efa7 | @C:\WINDOWS\system32\powrprof.dll,-1231,Processor performance increase time for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 40fbefc7 | @C:\WINDOWS\system32\powrprof.dll,-393,Processor performance decrease policy | AC=- DC=-
+  H 40fbefc7 | @C:\WINDOWS\system32\powrprof.dll,-1211,Processor performance decrease policy for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 43f278bc | @C:\WINDOWS\system32\powrprof.dll,-1722,Long running threads' processor architecture lower limit | AC=- DC=-
+  H 447235c7 | @C:\WINDOWS\system32\powrprof.dll,-806,Processor performance core parking parked performance state | AC=- DC=-
+  H 447235c7 | @C:\WINDOWS\system32\powrprof.dll,-1223,Processor performance core parking parked performance state for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 45bcc044 | @C:\WINDOWS\system32\powrprof.dll,-720,Processor performance boost policy | AC=- DC=-
+  H 465e1f50 | @C:\WINDOWS\system32\powrprof.dll,-391,Processor performance increase policy | AC=- DC=-
+  H 465e1f50 | @C:\WINDOWS\system32\powrprof.dll,-1213,Processor performance increase policy for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 4b70f900 | @C:\WINDOWS\system32\powrprof.dll,-822,Latency sensitivity hint processor energy performance preference | AC=- DC=-
+  H 4b70f900 | @C:\WINDOWS\system32\powrprof.dll,-824,Latency sensitivity hint processor energy performance preference for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 4b70f900 | @C:\WINDOWS\system32\powrprof.dll,-1321,Latency sensitivity hint processor energy performance preference for Processor Power Efficiency Class 2 | AC=- DC=-
+  H 4b92d758 | @C:\WINDOWS\system32\powrprof.dll,-707,Processor idle demote threshold | AC=- DC=-
+  H 4bdaf4e9 | @C:\WINDOWS\system32\powrprof.dll,-801,Processor performance core parking distribution threshold | AC=- DC=-
+  H 4d2b0152 | @C:\WINDOWS\system32\powrprof.dll,-399,Processor performance time check interval | AC=- DC=-
+  H 4e4450b3 | @C:\WINDOWS\system32\powrprof.dll,-816,Processor duty cycling | AC=- DC=-
+  H 53824d46 | @C:\WINDOWS\system32\powrprof.dll,-1718,Short running threads' processor architecture lower limit | AC=- DC=-
+  H 5ba7419a | @C:\WINDOWS\system32\powrprof.dll,-1901,WPS minimum efficiency score for small cores | AC=- DC=-
+  H 5d76a2ca | @C:\WINDOWS\system32\powrprof.dll,-703,Processor idle disable | AC=- DC=-
+  H 603fe9ce | @C:\WINDOWS\system32\powrprof.dll,-831,Processor resource priority | AC=- DC=-
+  H 603fe9ce | @C:\WINDOWS\system32\powrprof.dll,-833,Processor resource priority for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 603fe9ce | @C:\WINDOWS\system32\powrprof.dll,-1325,Processor resource priority for Processor Power Efficiency Class 2 | AC=- DC=-
+  H 60fbe21b | @C:\WINDOWS\system32\powrprof.dll,-1754,Hetero containment policy. | AC=- DC=-
+  H 616cdaa5 | @C:\WINDOWS\system32\powrprof.dll,-795,Latency sensitivity hint min unparked cores/packages | AC=- DC=-
+  H 616cdaa5 | @C:\WINDOWS\system32\powrprof.dll,-1221,Latency sensitivity hint min unparked cores/packages for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 619b7505 | @C:\WINDOWS\system32\powrprof.dll,-724,Latency sensitivity hint processor performance | AC=- DC=-
+  H 619b7505 | @C:\WINDOWS\system32\powrprof.dll,-1219,Latency sensitivity hint processor performance for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 619b7505 | @C:\WINDOWS\system32\powrprof.dll,-1319,Latency sensitivity hint processor performance for Processor Power Efficiency Class 2 | AC=- DC=-
+  H 64fcee6b | @C:\WINDOWS\system32\powrprof.dll,-1746,Processor performance increase time for a containment zone | AC=- DC=-
+  H 6788488b | @C:\WINDOWS\system32\powrprof.dll,-1752,Processor hybrid containment concurrency threshold | AC=- DC=-
+  H 69439b22 | @C:\WINDOWS\system32\powrprof.dll,-1750,Processor efficiency containment concurrency threshold | AC=- DC=-
+  H 6c2993b0 | @C:\WINDOWS\system32\powrprof.dll,-701,Processor idle threshold scaling | AC=- DC=-
+  H 6ece9e1f | @C:\WINDOWS\system32\powrprof.dll,-1761,Efficiency containment zone important utility percentage | AC=- DC=-
+  H 6ff13aeb | @C:\WINDOWS\system32\powrprof.dll,-1748,Processor performance decrease time for a containment zone. | AC=- DC=-
+  H 71021b41 | @C:\WINDOWS\system32\powrprof.dll,-763,Processor performance core parking decrease policy | AC=- DC=-
+  H 75b0ae3f | @C:\WINDOWS\system32\powrprof.dll,-820,Maximum processor frequency | AC=- DC=-
+  H 75b0ae3f | @C:\WINDOWS\system32\powrprof.dll,-1243,Maximum processor frequency for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 75b0ae3f | @C:\WINDOWS\system32\powrprof.dll,-1315,Maximum processor frequency for Processor Power Efficiency Class 2 | AC=- DC=-
+  H 7b224883 | @C:\WINDOWS\system32\powrprof.dll,-709,Processor idle promote threshold | AC=- DC=-
+  H 7d24baa7 | @C:\WINDOWS\system32\powrprof.dll,-722,Processor performance history count | AC=- DC=-
+  H 7d24baa7 | @C:\WINDOWS\system32\powrprof.dll,-1201,Processor performance history count for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 7f2492b6 | @C:\WINDOWS\system32\powrprof.dll,-1229,Processor performance decrease time for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 7f2f5cfa | @C:\WINDOWS\system32\powrprof.dll,-1251,Heterogeneous policy in effect | AC=- DC=-
+  H 828423eb | @C:\WINDOWS\system32\powrprof.dll,-1716,Short running threads' processor architecture upper limit | AC=- DC=-
+  . 893dee8e | @C:\WINDOWS\system32\powrprof.dll,-365,Minimum processor state | AC=5 DC=5
+  H 893dee8e | @C:\WINDOWS\system32\powrprof.dll,-1203,Minimum processor state for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 893dee8e | @C:\WINDOWS\system32\powrprof.dll,-1317,Minimum processor state for Processor Power Efficiency Class 2 | AC=- DC=-
+  H 8baa4a8a | @C:\WINDOWS\system32\powrprof.dll,-808,Processor performance autonomous mode | AC=- DC=-
+  H 93b8b6dc | @C:\WINDOWS\system32\powrprof.dll,-1263,Heterogeneous thread scheduling policy | AC=- DC=-
+  H 943c8cb6 | @C:\WINDOWS\system32\powrprof.dll,-793,Processor performance core parking overutilization threshold | AC=- DC=-
+  H 94d3a615 | @C:\WINDOWS\system32\powrprof.dll,-371,System cooling policy | AC=- DC=-
+  H 97cfac41 | @C:\WINDOWS\system32\powrprof.dll,-777,Processor performance core parking soft park latency | AC=- DC=-
+  H 984cf492 | @C:\WINDOWS\system32\powrprof.dll,-395,Processor performance increase time | AC=- DC=-
+  H 984cf492 | @C:\WINDOWS\system32\powrprof.dll,-1209,Processor performance increase time for Processor Power Efficiency Class 1 | AC=- DC=-
+  H 9943e905 | @C:\WINDOWS\system32\powrprof.dll,-736,Processor idle state maximum | AC=- DC=-
+  H b000397d | @C:\WINDOWS\system32\powrprof.dll,-1235,Processor performance level increase threshold for Processor Power Efficiency Class 1 processor count increase | AC=- DC=-
+  H b000397d | @C:\WINDOWS\system32\powrprof.dll,-1279,Processor performance level increase threshold for Processor Power Efficiency Class 2 processor count increase | AC=- DC=-
+  H b0deaf6b | @C:\WINDOWS\system32\powrprof.dll,-1725,Module unpark policy | AC=- DC=-
+  H b28a6829 | @C:\WINDOWS\system32\powrprof.dll,-1738,Smt threads unpark policy | AC=- DC=-
+  H b669a5e9 | @C:\WINDOWS\system32\powrprof.dll,-1733,Complex unpark policy | AC=- DC=-
+  H bae08b81 | @C:\WINDOWS\system32\powrprof.dll,-1265,Heterogeneous short running thread scheduling policy | AC=- DC=-
+  . bc5038f7 | @C:\WINDOWS\system32\powrprof.dll,-363,Maximum processor state | AC=100 DC=90
+  H bc5038f7 | @C:\WINDOWS\system32\powrprof.dll,-1205,Maximum processor state for Processor Power Efficiency Class 1 | AC=- DC=-
+  H bc5038f7 | @C:\WINDOWS\system32\powrprof.dll,-1313,Maximum processor state for Processor Power Efficiency Class 2 | AC=- DC=-
+  H be337238 | @C:\WINDOWS\system32\powrprof.dll,-728,Processor performance boost mode | AC=2 DC=1
+  H bf903d33 | @C:\WINDOWS\system32\powrprof.dll,-1720,Long running threads' processor architecture upper limit | AC=- DC=-
+  H c4581c31 | @C:\WINDOWS\system32\powrprof.dll,-705,Processor idle time check | AC=- DC=-
+  H c7be0679 | @C:\WINDOWS\system32\powrprof.dll,-761,Processor performance core parking increase policy | AC=- DC=-
+  H cfeda3d0 | @C:\WINDOWS\system32\powrprof.dll,-814,Processor autonomous activity window | AC=- DC=-
+  H d8edeb9b | @C:\WINDOWS\system32\powrprof.dll,-397,Processor performance decrease time | AC=- DC=-
+  H d8edeb9b | @C:\WINDOWS\system32\powrprof.dll,-1207,Processor performance decrease time for Processor Power Efficiency Class 1 | AC=- DC=-
+  H d92998c2 | @C:\WINDOWS\system32\powrprof.dll,-1714,Short vs. long running thread threshold | AC=- DC=-
+  H dfd10d17 | @C:\WINDOWS\system32\powrprof.dll,-771,Processor performance core parking decrease time | AC=- DC=-
+  H e0007330 | @C:\WINDOWS\system32\powrprof.dll,-773,Processor performance core parking utility distribution | AC=- DC=-
+  H ea062031 | @C:\WINDOWS\system32\powrprof.dll,-765,Processor performance core parking max cores | AC=- DC=-
+  H ea062031 | @C:\WINDOWS\system32\powrprof.dll,-1227,Processor performance core parking max cores for Processor Power Efficiency Class 1 | AC=- DC=-
+  H f735a673 | @C:\WINDOWS\system32\powrprof.dll,-799,Processor performance core parking concurrency headroom threshold | AC=- DC=-
+  H f8861c27 | @C:\WINDOWS\system32\powrprof.dll,-1233,Processor performance level decrease threshold for Processor Power Efficiency Class 1 processor count decrease | AC=- DC=-
+  H f8861c27 | @C:\WINDOWS\system32\powrprof.dll,-1281,Processor performance level decrease threshold for Processor Power Efficiency Class 2 processor count decrease | AC=- DC=-
+  H fddc842b | @C:\WINDOWS\system32\powrprof.dll,-1239,A floor performance for Processor Power Efficiency Class 0 when there are Processor Power Efficiency Class 1 processors unparked | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-1601,Graphics settings (5fb4938d-1ee8-4b0f-9a3c-5036b0ab995c) ==
+  H dd848b2a | @C:\WINDOWS\system32\powrprof.dll,-1603,GPU preference policy | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-1151,Disconnected Standby Mode (68afb2d9-ee95-47a8-8f50-4115088073b1) ==
+  . DefaultP | DefaultPowerSchemeValues | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-401,Display (7516b95f-f776-4464-8c53-06167f40cc99) ==
+  H 17aaa29b | @C:\WINDOWS\system32\powrprof.dll,-407,Dim display after | AC=- DC=-
+  . 3c0bc021 | @C:\WINDOWS\system32\powrprof.dll,-403,Turn off display after | AC=- DC=-
+  H 684c3e69 | @C:\WINDOWS\system32\powrprof.dll,-417,Advanced Color quality bias | AC=- DC=-
+  H 89cc76a4 | 89cc76a4-f226-4d4b-a040-6e9a1da9b882 | AC=- DC=-
+  H 8ec4b3a5 | @C:\WINDOWS\system32\powrprof.dll,-415,Console lock display off timeout | AC=- DC=-
+  H 90959d22 | @C:\WINDOWS\system32\powrprof.dll,-405,Adaptive display | AC=- DC=-
+  H a9ceb8da | @C:\WINDOWS\system32\powrprof.dll,-567,Allow display required policy | AC=- DC=-
+  . aded5e82 | @C:\WINDOWS\system32\powrprof.dll,-516, Display brightness | AC=60 DC=60
+  H aded5e82 | aded5e82-b909-4619-9949-f5d71dac0bcc | AC=- DC=-
+  . f1fbfde2 | @C:\WINDOWS\system32\powrprof.dll,-522, Display dim brightness | AC=- DC=-
+  . fbd9aa66 | @C:\WINDOWS\system32\powrprof.dll,-413,Enable adaptive brightness | AC=1 DC=1
+
+== @C:\WINDOWS\system32\powrprof.dll,-1101,Presence Aware Power Behavior (8619b916-e004-4dd8-9b66-dae86f806698) ==
+  H 0a7d6ab6 | @C:\WINDOWS\system32\powrprof.dll,-1191,Human Presence Sensor Adaptive Away Display Timeout | AC=- DC=-
+  H 468fe7e5 | @C:\WINDOWS\system32\powrprof.dll,-1187,Standby Reserve Time | AC=- DC=-
+  H 49cb11a5 | @C:\WINDOWS\system32\powrprof.dll,-1189,Standby Reset Percentage | AC=- DC=-
+  H 5adbbfbc | @C:\WINDOWS\system32\powrprof.dll,-1105,Non-sensor Input Presence Timeout | AC=- DC=-
+  H 60c07fe1 | @C:\WINDOWS\system32\powrprof.dll,-1181,Standby Budget Grace Period | AC=- DC=-
+  H 61f45dfe | @C:\WINDOWS\system32\powrprof.dll,-1801,Standby Budget Refresh Interval | AC=- DC=-
+  H 82011705 | @C:\WINDOWS\system32\powrprof.dll,-1171,User Presence Prediction mode | AC=- DC=-
+  H 9fe527be | @C:\WINDOWS\system32\powrprof.dll,-1183,Standby Budget Percent | AC=- DC=-
+  H a79c8e0e | @C:\WINDOWS\system32\powrprof.dll,-1197,Human Presence Sensor Adaptive Away Dim Timeout | AC=- DC=-
+  H aca8648e | @C:\WINDOWS\system32\powrprof.dll,-1199,Standby Budget Refresh Count | AC=- DC=-
+  H c763ee92 | @C:\WINDOWS\system32\powrprof.dll,-1185,Standby Reserve Grace Period | AC=- DC=-
+  H cf8c6097 | @C:\WINDOWS\system32\powrprof.dll,-1193,Human Presence Sensor Adaptive Inattentive Dim Timeout | AC=- DC=-
+  H ee16691e | @C:\WINDOWS\system32\powrprof.dll,-1195,Human Presence Sensor Adaptive Inattentive Display Timeout | AC=- DC=-
+
+== @C:\Program Files\Windows Media Player\wmpnetwk.exe,-3001,Multimedia settings (9596FB26-9850-41fd-AC3E-F7C3C00AFD4B) ==
+  . 03680956 | @C:\Program Files\Windows Media Player\wmpnetwk.exe,-3003,When sharing media | AC=- DC=-
+  . 10778347 | @C:\WINDOWS\system32\mfplat.dll,-1001,Video playback quality bias | AC=- DC=-
+  . 34C7B99F | @C:\WINDOWS\system32\evr.dll,-100,When playing video | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-1161,Energy Saver settings (de830923-a562-41af-a086-e3a2c6bad2da) ==
+  H 13d09884 | @C:\WINDOWS\system32\powrprof.dll,-1166,Display brightness weight | AC=- DC=-
+  H 5c5bb349 | @C:\WINDOWS\system32\powrprof.dll,-1301,Energy Saver Policy | AC=- DC=-
+  H e69653ca | @C:\WINDOWS\system32\powrprof.dll,-1163,Charge level | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-201,Battery (e73a048d-bf27-4f12-9731-8b2076e8891f) ==
+  . 5dbb7c9f | @C:\WINDOWS\system32\powrprof.dll,-211,Critical battery notification | AC=- DC=-
+  . 637ea02f | @C:\WINDOWS\system32\powrprof.dll,-203,Critical battery action | AC=- DC=-
+  . 8183ba9a | @C:\WINDOWS\system32\powrprof.dll,-221,Low battery level | AC=- DC=-
+  . 9a66d8d7 | @C:\WINDOWS\system32\powrprof.dll,-219,Critical battery level | AC=- DC=-
+  . bcded951 | @C:\WINDOWS\system32\powrprof.dll,-213,Low battery notification | AC=- DC=-
+  . d8742dcb | @C:\WINDOWS\system32\powrprof.dll,-205,Low battery action | AC=- DC=-
+  . F3C5027D | @C:\WINDOWS\system32\batmeter.dll,-400,Reserve Battery Warning Trip Point | AC=- DC=-
+
+== @C:\WINDOWS\system32\powrprof.dll,-1141,Networking connectivity in Standby (f15576e8-98b7-4186-b944-eafa664402d9) ==
+  . DefaultP | DefaultPowerSchemeValues | AC=- DC=-
+
+== Overlay ==
+  AC=ded574b5-45a0-4f42-8737-46345c09c238 DC=ded574b5-45a0-4f42-8737-46345c09c238

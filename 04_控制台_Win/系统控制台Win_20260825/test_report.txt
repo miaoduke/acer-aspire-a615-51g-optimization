@@ -1,0 +1,15 @@
+PASS   T1_build_artifacts         release+debug+LHM.dll
+PASS   T2_selftest                exit=0
+INFO   T2a_lhm_probe              LibreHardwareMonitor: ??? ? ??: ???????
+INFO   T2b_nvidia                 MX150 via nvidia-smi
+PASS   T3_gui_alive_title         alive=True
+PASS   T5_memory_stability        MB: 57.3,57.6,58,58.2,58.6,58.4
+PASS   T9a_shot_tab0              shot_tab0_overview.png
+PASS   T4_tab1_alive              process
+PASS   T4_tab1_shot               shot_tab1.png
+PASS   T4_tab2_alive              process
+SKIP   T4_tab2_shot               shot_tab2.png
+PASS   T4_tab3_alive              process
+PASS   T4_tab3_shot               shot_tab3.png
+PASS   T6_plan_roundtrip          switch+restore ok
+PASS   T7_settings_persist        iv=True alerts=True rewritten(tab=1)=True h=2228788 cmr=True exited=True
