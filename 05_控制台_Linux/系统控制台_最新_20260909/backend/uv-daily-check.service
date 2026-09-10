@@ -1,0 +1,14 @@
+[Unit]
+Description=Undervolt stability daily check
+Documentation=file:/var/log/uv_daily_check.log
+# 需在 undervolt.service 之后运行，读到的是持久化后的实际值
+After=undervolt.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/uv_daily_check.sh
+# 期望降压值可用 Environment= 覆盖，默认 -80mV
+Environment=EXPECT_MV=100
+
+[Install]
+WantedBy=multi-user.target

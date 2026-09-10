@@ -1,3 +1,0 @@
-timestamp	datetime	capacity_pct	status	power_w	current_ma	voltage_mv	charge_full_uwh	charge_full_design_uwh	health_pct	cycle_count	phase	temp_c
-1787456877.6539202	11:47:57	100	Full	0	0	16924	0	0	80.55900621118013	0	full	0
-1787456909.6062796	11:48:29	100	Full	0	0	16924	0	0	80.55900621118013	0	full	31.9

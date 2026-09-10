@@ -1,0 +1,76 @@
+# Maintainer: <USER> <USER@example.com>
+# P2-2: AUR PKGBUILD for system-console
+
+pkgname=system-console
+pkgver=2.0.0
+pkgrel=1
+pkgdesc="Acer A615-51G 笔记本调优工具 (GUI + profile + plugin + RAPL/温度守护/MSR降压)"
+arch=('any')
+url="https://github.com/miaoduke/acer-aspire-a615-51g-optimization"
+license=('MIT')
+depends=(
+    'python'
+    'python-gobject'
+    'gtk3'
+    'polkit'
+    'zenity'
+    'msr-tools'
+)
+optdepends=(
+    'intel-ucode: 必需'
+    'linux-headers: msr 模块编译'
+)
+makedepends=('git')
+install=system-console.install
+
+source=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+package() {
+    # 主程序
+    install -dm755 "${pkgdir}/opt/${pkgname}"
+    cp -r "${srcdir}/${pkgname}-${pkgver}/"* "${pkgdir}/opt/${pkgname}/"
+
+    # 软链接到 PATH
+    install -dm755 "${pkgdir}/usr/bin"
+    ln -s "/opt/${pkgname}/console.py" "${pkgdir}/usr/bin/system-console"
+    ln -s "/opt/${pkgname}/scripts/phase1_health_check.sh" "${pkgdir}/usr/bin/system-console-check"
+    ln -s "/opt/${pkgname}/scripts/snapshot_quick.py" "${pkgdir}/usr/bin/system-console-snapshot"
+
+    # systemd 服务（msr_deadman）
+    install -dm755 "${pkgdir}/usr/lib/systemd/system"
+    install -m644 "${srcdir}/${pkgname}-${pkgver}/backend/msr_deadman.service" \
+        "${pkgdir}/usr/lib/systemd/system/"
+    install -m644 "${srcdir}/${pkgname}-${pkgver}/backend/msr_deadman.timer" \
+        "${pkgdir}/usr/lib/systemd/system/"
+    install -m755 "${srcdir}/${pkgname}-${pkgver}/backend/msr_deadman.sh" \
+        "${pkgdir}/usr/lib/systemd/msr_deadman.sh"
+
+    # sudoers 模板（用户需手动安装）
+    install -dm755 "${pkgdir}/etc/sudoers.d"
+    install -m440 /dev/stdin "${pkgdir}/etc/sudoers.d/${pkgname}" <<EOF
+%wheel ALL=(root) NOPASSWD: /opt/${pkgname}/scripts/场景管理.sh
+%wheel ALL=(root) NOPASSWD: /opt/${pkgname}/backend/m3_gui.sh
+%wheel ALL=(root) NOPASSWD: /usr/bin/prime-select
+%wheel ALL=(root) NOPASSWD: /usr/sbin/ras-mc-ctl
+%wheel ALL=(root) NOPASSWD: /usr/bin/timeshift
+%wheel ALL=(root) NOPASSWD: /opt/${pkgname}/backend/adapt_test.sh
+%wheel ALL=(root) NOPASSWD: /usr/sbin/efibootmgr
+%wheel ALL=(root) NOPASSWD: /usr/local/bin/thermal_ctl.sh
+EOF
+
+    # 默认 profile/plugin 目录
+    install -dm755 "${pkgdir}/etc/skel/.config/system-console"
+    install -dm755 "${pkgdir}/etc/skel/.config/system-console/profiles"
+    install -dm755 "${pkgdir}/etc/skel/.config/system-console/plugins"
+
+    # 文档
+    install -dm755 "${pkgdir}/usr/share/doc/${pkgname}"
+    cp -r "${srcdir}/${pkgname}-${pkgver}"/data/phase*/STATUS.md \
+        "${pkgdir}/usr/share/doc/${pkgname}/" 2>/dev/null || true
+
+    # 许可证
+    install -dm755 "${pkgdir}/usr/share/licenses/${pkgname}"
+    install -m644 "${srcdir}/${pkgname}-${pkgver}/LICENSE" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/" 2>/dev/null || true
+}

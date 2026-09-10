@@ -11,7 +11,7 @@
 
 **English:**
 
-**Acer Aspire A615-51G — power & thermal optimization (dual-boot).** This is a **personal hobby research project** on an Acer Aspire A615-51G (Intel i5-8250U, 12GB, UHD 620 + NVIDIA MX150, dual-boot Windows 11 / Linux Mint). It documents an evidence-based Linux power-tuning stack (**-80mV undervolt, PL1/PL2=25W, C-state=max_cstate=4, Turbo dual-guard, AC/DC auto-switch, safety-net services**) and a **zero-dependency self-made system console** (Python3 + GTK3 on Linux, C# WinForms v6.8 compiled with the system `csc` on Windows).
+**Acer Aspire A615-51G — power & thermal optimization (dual-boot).** This is a **personal hobby research project** on an Acer Aspire A615-51G (Intel i5-8250U, 12GB, UHD 620 + NVIDIA MX150, dual-boot Windows 11 / Linux Mint). It documents an evidence-based Linux power-tuning stack (**-100mV undervolt (D7-accepted 2026-09-07), PL1/PL2=25W, C-state=max_cstate=4, Turbo dual-guard, AC/DC auto-switch, safety-net services**) and a **zero-dependency self-made system console** (Python3 + GTK3 on Linux, C# WinForms v6.8 compiled with the system `csc` on Windows).
 
 **Please note before using anything here:**
 - This is an **unofficial personal study** — it is **not affiliated with, endorsed by, or the official product of, Acer / Microsoft / NVIDIA / Linux Mint**.
@@ -21,7 +21,7 @@
 
 **中文：**
 
-**Acer Aspire A615-51G —— 电源与散热优化（双系统）。** 这是一个针对 Acer Aspire A615-51G（Intel i5-8250U、12GB、UHD 620 + NVIDIA MX150、Windows 11 / Linux Mint 双系统）的**个人爱好研究项目**。它记录了基于实测的 Linux 电源调优栈（**-80mV 降压、PL1/PL2=25W、C-state=max_cstate=4、Turbo 双守护、AC/DC 自动切换、安全网服务**），以及一个**零依赖的自制系统控制台**（Linux 侧 Python3 + GTK3，Windows 侧 C# WinForms v6.8、用系统自带 `csc` 编译）。
+**Acer Aspire A615-51G —— 电源与散热优化（双系统）。** 这是一个针对 Acer Aspire A615-51G（Intel i5-8250U、12GB、UHD 620 + NVIDIA MX150、Windows 11 / Linux Mint 双系统）的**个人爱好研究项目**。它记录了基于实测的 Linux 电源调优栈（**-100mV 降压（D7 验收通过，2026-09-07）、PL1/PL2=25W、C-state=max_cstate=4、Turbo 双守护、AC/DC 自动切换、安全网服务**），以及一个**零依赖的自制系统控制台**（Linux 侧 Python3 + GTK3，Windows 侧 C# WinForms v6.8、用系统自带 `csc` 编译）。
 
 **使用前请务必注意：**
 - 这是**非官方的个人研究**——与 Acer / Microsoft / NVIDIA / Linux Mint **无任何关联、非官方支持、非其官方产品**。
@@ -35,6 +35,9 @@
 > - **系统 (OS)**: 双系统 (Dual-boot)（Windows 11 Build 26200 / Linux Mint 22.3）
 > - **重组日期 (Reorganized): 2026-08-31**（原为 `电源优化打包_20260825` 三分类，现按四象限重排）
 > - **上位目录 (Parent):** `/media/<USER>/WS/acer 性能优化方案/`
+> - **控制台最新版 (Console latest)**: v2.0 — `05_控制台_Linux/系统控制台_最新_20260909/`（2026-09-10 同步，替代旧 v1）
+
+> **⚠️ 2026-09-10 控制台同步通告 / Console v2.0 Sync Notice：** Linux 控制台由 **v1 → v2.0**，代码库整体迁移至 `05_控制台_Linux/系统控制台_最新_20260909/`。核心变化：**降压定稿从 -80mV → -100mV**（D7 观察期 4 天验收通过，实测 core -99.61mV），新增 profile 配置化 / plugin 抽象 / 中英双语 i18n / 12 套件 112 用例 / CI / AUR 打包模板，并引入 MSR 降压三重守护（msr_deadman + uv-safeguard + uv-daily-check）。本节下文的 v1 细节仍保留作历史记录，均以 v2.0 为准。 / *The Linux console was upgraded v1 → v2.0, migrated to `05_控制台_Linux/系统控制台_最新_20260909/`. Final undervolt -80mV → -100mV (D7-accepted, measured core -99.61mV); added profile config, plugin abstraction, bilingual i18n, 12 suites / 112 cases, CI, and an AUR template; plus a triple undervolt safeguard (msr_deadman + uv-safeguard + uv-daily-check). Older v1 details below are kept as history — v2.0 is authoritative.*
 
 ---
 
@@ -57,7 +60,7 @@ acer 性能优化方案/
 ├── 04_控制台_Win/         Windows 控制台（C# WinForms v6.8）| Windows console (C# WinForms v6.8)
 │   └── 系统控制台Win_20260825/
 ├── 05_控制台_Linux/       Linux 控制台（Python3 + GTK3）⭐ | Linux console (Python3 + GTK3) ⭐
-│   └── 系统控制台/
+│   └── 系统控制台_最新_20260909/      🏆 v2.0 主版本 (2026-09-10，替代旧 v1 并移除)
 ├── 99_存档_只读/          ⛔ 历史存档，勿改勿引用 | ⛔ historical archive, do not modify or reference
 │   ├── Linux对比_20260812/        早期 Win/Linux 对比实验（53 文件）| early Win/Linux comparison (53 files)
 │   ├── PowerSettingsBackup_20260811/  0811 电源实验工作台（75 文件，一次性胶水脚本）| 0811 power experiment bench (75 files, one-off glue scripts)
@@ -99,32 +102,35 @@ acer 性能优化方案/
 | 优先级 (Priority) | 文档 (Document) | 位置 (Location) | 用途 (Purpose) |
 |---|--|---|---|
 | 🥇 | **00_交接手册_重装后启动.md** | `03_Linux/性能优化方案_20260822/` | **单一事实源 (single source of truth)**。定稿值、重建步骤、大事记 |
-| 🥈 | **降压实验记录_-80mV_20260830.md** | 同上 (same) | 全树最新（08-30）。-80mV 五项场景验证全数据 |
+| 🥈 | **D7_验收报告_20260907.md** ＋ **降压实验记录_-80mV_20260830.md** | 前者 `05_控制台_Linux/系统控制台_最新_20260909/data/phase1/`；后者 `03_Linux/性能优化方案_20260822/` | **-100mV 降压 D7 验收（2026-09-10 更新，当前定稿依据）**；-80mV 五项场景验证历史数据（已被 -100mV 取代） |
 | 🥉 | **AI自主科学优化SOP_Linux_v1_20260813.md** | 同上 (same) | 安全红线 / 测量协议 / 服务模板 |
-| 4 | 未实现清单_20260820.md | `05_控制台_Linux/系统控制台/` | 放弃项 / 待观察项穷尽调研 |
+| 4 | 未实现清单_20260820.md | `05_控制台_Linux/系统控制台_最新_20260909/` | 放弃项 / 待观察项穷尽调研 |
 | 4.5 | **Bug修复档案_20260831.md** | 根目录 (root) | 08-31 发现并修复的全部 bug（9 静态 + 5 动态）+ 方法论 |
 | 5 | 09B_本机Linux生态_20260825.md | `01_通用/系统控制台方案_20260825/` | Linux 生态能力全景 |
 | 6 | 事故复盘_DKMS_20260829.md | `03_Linux/性能优化方案_20260822/acer-wmi-battery_源码备份/` | 内核模块三次失效的根因与根治 |
 
 ---
 
-## 四、当前定稿（2026-08-30，真机实测）/ 4. Current Final Spec (2026-08-30, real-hardware measured)
+## 四、当前定稿（真机实测）/ 4. Current Final Spec (real-hardware measured)
+
+> **🟩 2026-09-10 更新 / Updated 2026-09-10：** 降压定稿由 **-80mV → -100mV**（D7 验收通过，2026-09-07）。下表已更新为 v2.0 终值；-80mV 记录仍保留于下文各历史章节。 / *Undervolt final changed -80mV → -100mV (D7 accepted 2026-09-07). Table below now reflects v2.0 final values; -80mV history is kept under the historical sections.* **验收依据 (Evidence)：** `05_控制台_Linux/系统控制台_最新_20260909/data/phase1/D7_验收报告_20260907.md`
 
 | 项 (Item) | 值 (Value) |
 |---|---|
 | 内核 (Kernel) | 7.0.0-30-generic |
-| **降压 (Undervolt)** | **-80mV**（实测 -80.08mV，core/gpu/cache 三域）⏳ 观察期至 09-03 |
+| **降压 (Undervolt)** | **-100mV**（实测 core -99.61mV；D7 观察期 2026-09-03→09-07 验收通过，16/16 项）🟩 |
 | PL1/PL2 | 25W / 25W |
 | C-state | `max_cstate=4` |
 | Turbo | ON（双守护 / dual-guard） |
 | GPU | intel 集显 |
-| 服务 (Services) | cpu-power-limit / turbo-enable / undervolt / undervolt-resume / acdc-profile / thermal-guard / rasdaemon / **uv-safeguard** / **uv-daily-check** |
+| 服务 (Services) | cpu-power-limit / turbo-enable / undervolt / undervolt-resume / acdc-profile / thermal-guard / rasdaemon / **uv-safeguard** / **uv-daily-check** / **msr_deadman** |
 
 **自动化保障 (Automation safeguards)：**
-- `uv-safeguard` — 异常关机自动回退 -50mV，防死机循环 (auto-fallback to -50mV on abnormal shutdown, preventing crash loops)
-- `uv-daily-check.timer` — 每日 10:00 + 开机 3 分钟巡检 7 项，正常静默、异常通知 (daily 10:00 + 3-min-after-boot check of 7 items; silent when OK, notifies on anomaly)
+- `uv-safeguard` — 异常关机三级判定（CLEAN/CRASH_REVERT/WATCH），自动回退并防死机循环 (three-tier verdict on abnormal shutdown: CLEAN/CRASH_REVERT/WATCH, prevents crash loops; D7 累计 CLEAN×6 + WATCH×1，零误回退)
+- `uv-daily-check.timer` — 每日 10:00 + 开机巡检，MCE 权威源 `ras-mc-ctl`（替代 mcelog/AER，零误报）(daily + boot check of MCE via `ras-mc-ctl`; D7 16 次运行全部 `MCE 0(+0)`)
+- `msr_deadman.timer` — 30 秒巡检，≥95°C 自动回退（30s patrol, auto-revert at ≥95°C; D7 期间 1523+ 次巡检零误触发）
 
-复测 (Re-test)：`sudo bash 05_控制台_Linux/系统控制台/backend/collect_ground_truth.sh`
+复测 (Re-test)：`sudo bash 05_控制台_Linux/系统控制台_最新_20260909/backend/collect_ground_truth.sh`
 
 ---
 
@@ -163,12 +169,15 @@ Windows 侧专属资产。
 ### 04_控制台_Win
 C# / WinForms **v6.8**（2026-08-28），六页 GUI。源码 5 个 .cs + 编译产物 + 10 个依赖 DLL。`README.md` 标注 v6.8，SELFTEST PASS、test_suite FAIL=0。已知瑕疵：`启动器.bat` 与 `启动控制台.cmd` 内容近似重复（已记录未处理）。
 
-### 05_控制台_Linux ⭐ GTK3 控制台主版本 (main version)
-Python3 + GTK3（209 文件）。分层：采集(collector) / 控制(controller) / UI(6×ui_) / 领域(src/core) / 后端(backend)。
-- `backend/check_ctl_consistency.sh` — 检出「UI 有控件但后端无分支」的缺陷
-- `backend/collect_ground_truth.sh` — 真机真值采集（专治文档互相矛盾）
-- `20260821_084408/`、`20260821_100541/` — 系统快照（**两份内容完全相同**，冗余）
-- `20260829_135207/` — 08-29 会话备份（含 90MB opencode.db）
+### 05_控制台_Linux ⭐ GTK3 控制台（v2.0 主版本 / main version）
+**🏆 主版本：** `系统控制台_最新_20260909/`（**v2.0**，2026-09-10 同步；旧 v1 `系统控制台/` 已随本次同步移除）。Python3 + GTK3 + systemd（约 110 个发布文件，12 套件 112 用例全绿）。分层：采集 / 控制 / UI(7 页) / 领域(src/core) / 后端(backend) / 配置(profiles) / 插件(plugins)。
+- **v2.0 新架构**：profile 配置化（8 内置 + 用户自定义 + INI 继承）、plugin 抽象（TuneD 启发）、中英双语 i18n（453 词条，`T()` 运行时切换）、GUI 7 页
+- **MSR 降压三重守护**：`msr_deadman`(30s 巡检/95°C 回退) + `uv-safeguard`(异常关机三级判定) + `uv-daily-check`(ras-mc-ctl 权威 MCE)
+- **AC/DC 自动切换**：acdc-profile v9，含 GPU GT 频率联动（AC 1100 / DC 700 MHz）
+- 服务：undervolt / undervolt-resume / acdc-profile / cpu-power-limit / thermal-guard(85°C 降 PL1) / msr_deadman / uv-safeguard / uv-daily-check
+- `aur/PKGBUILD`：AUR 打包**模板**（尚未发布到 AUR，使用请走源码 `install.sh`）
+- 兼容学习了 `backend/check_ctl_consistency.sh`（检出「UI 有控件但后端无分支」）与 `backend/collect_ground_truth.sh`（真机真值采集）思路
+- 详阅新控制台自身 `README.md` 与 `data/phase1/D7_验收报告_20260907.md`
 
 ### 99_存档_只读 ⛔ (99_Archive_ReadOnly)
 **历史存档，不应再改动或引用其结论**：
@@ -181,11 +190,13 @@ Python3 + GTK3（209 文件）。分层：采集(collector) / 控制(controller)
 
 ## 六·补 启动控制台（三种方式）/ 6.1 Launching the Console (Three Ways)
 
+> **🟩 2026-09-10 注记 / Note 2026-09-10:** v2.0 运行位置为 `~/.local/share/系统控制台/`（桌面副本早已移除）。终端启动统一为 `bash ~/.local/share/系统控制台/启动控制台.sh`，或 `python3 console.py`。
+
 | 方式 (Method) | 操作 (Action) |
 |---|---|
 | **桌面双击 (Desktop double-click)** ⭐ | 桌面「系统控制台」图标 |
 | **应用菜单 (App menu)** | 搜索「系统控制台」 |
-| **终端 (Terminal)** | `bash ~/桌面/系统控制台/启动控制台.sh` |
+| **终端 (Terminal)** | `bash ~/.local/share/系统控制台/启动控制台.sh`（v2.0；v1 曾为 `~/桌面/...`）|
 
 ### 启动器 `启动控制台.sh`（相比原 `start.sh` 的增强）/ Launcher `启动控制台.sh` (enhanced vs. original `start.sh`)
 
@@ -232,27 +243,25 @@ bash 启动控制台.sh --force    # 跳过单实例检查，再开一个 | skip
 
 ## 八、⚠️ 改代码后必须部署（双副本架构）/ 8. ⚠️ You MUST Deploy After Changing Code (Dual-Copy Architecture)
 
+> **🟩 2026-09-10 注记 / Note 2026-09-10:** 本节描述的 `deploy.sh` 双副本同步机制属于 **v1**。v2.0 改为 `install.sh` 动态部署（`~/.config/system-console/config.yaml` 配置化，`APP_DIR` 运行时替换，重跑一次即修复绝对路径）；归档主版本现为 `05_控制台_Linux/系统控制台_最新_20260909/`。v1 的 deploy.sh 流程记录保留如下。 / *This dual-copy `deploy.sh` flow is v1. v2.0 uses `install.sh` (config-driven via `~/.config/system-console/config.yaml`, runtime `APP_DIR` substitution). Archive master is now `05_控制台_Linux/系统控制台_最新_20260909/`. v1 flow kept below for history.*
+
 **归档源码 ≠ 运行程序 (Archived source ≠ running program)。** 两者是不同位置：
 
 | 角色 (Role) | 路径 (Path) |
 |---|---|
-| **归档主版本 (Archive master, edit here)** | `05_控制台_Linux/系统控制台/` |
-| **运行位置 (Runtime location, sudoers whitelist target)** | `~/桌面/系统控制台/` |
-| 运行数据落盘 (Runtime data) | `~/桌面/系统控制台/data/` |
+| **归档主版本 (Archive master, edit here)** | `05_控制台_Linux/系统控制台_最新_20260909/`（v2.0）|
+| **运行位置 (Runtime location, sudoers whitelist target)** | `~/.local/share/系统控制台/` |
+| 运行数据落盘 (Runtime data) | `~/.local/share/系统控制台/data/` |
 
 **只改归档不会生效 (Editing only the archive has no effect)。** 改完必须执行：
 
 ```bash
-bash "05_控制台_Linux/系统控制台/deploy.sh"           # 部署 | deploy
-bash "05_控制台_Linux/.../deploy.sh" --check                        # 先预览差异 | preview diff first
-sudo install -m 0755 ~/桌面/系统控制台/backend/thermal_ctl.sh /usr/local/bin/   # 若改了 thermal_ctl | if thermal_ctl changed
+cd "05_控制台_Linux/系统控制台_最新_20260909"
+bash install.sh            # v2.0 动态部署 | dynamic deploy (config-driven)
+bash install.sh --check    # 先预览差异 | preview diff first
 ```
 
-`deploy.sh` 会：备份运行数据 → rsync 代码（排除数据/备份/会话记录）→ 部署 thermal_ctl/thermal_guard → 提示重启控制台程序。
-
-**验证部署成功 / Verify successful deployment**：`diff -rq ~/桌面/系统控制台 <归档目录>` 排除数据目录后应无差异。
-
-> 2026-08-31 状态：已完成首次部署，两者代码一致，thermal_ctl 8 分支已就位。
+> 2026-09-10 状态：v2.0 已部署（2026-09-02 起），D7 验收通过；归档与运行位置一致性由 `install.sh` 保证。
 
 ---
 
@@ -479,11 +488,13 @@ _run(["sudo", "-n", SCENE_SCRIPT, "bench"])   # _run 内部再加 sudo
 
 **架构（更新后）/ Architecture (updated)**：
 ```
-归档源码真源 (Archive source of truth):  /media/<USER>/WS/acer 性能优化方案/05_控制台_Linux/系统控制台/
+归档源码真源 (Archive source of truth):  /media/<USER>/WS/acer 性能优化方案/05_控制台_Linux/系统控制台_最新_20260909/   （v2.0）
 运行位置 (Runtime location):      ~/.local/share/系统控制台/        （sudoers/.desktop 指向）
-同步 (Sync):          bash <归档>/deploy.sh
+同步 (Sync):          bash <归档>/install.sh            （v2.0 动态部署；v1 曾用 deploy.sh）
 启动 (Launch):          桌面图标 / 应用菜单 / bash ~/.local/share/系统控制台/启动控制台.sh
 ```
+
+> 🟩 2026-09-10 注记 / Note 2026-09-10: 归档真源路径已改为 v2.0 目录（见上第 4、8 行注记）。（第 14 节其余迁移历史不变。）
 
 **迁移内容 (Migrated)**：
 - sudoers 2 文件（system-console / kernel-guard）路径更新 + 备份 .bak_桌面

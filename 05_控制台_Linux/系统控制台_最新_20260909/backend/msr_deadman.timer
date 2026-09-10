@@ -1,0 +1,15 @@
+[Unit]
+Description=MSR undervolt deadman switch — 30s 巡检 timer
+# 观察期专用: 30s 巡检一次，平衡及时性与开销
+
+[Timer]
+# 每 30 秒运行一次
+OnBootSec=1min
+OnUnitActiveSec=30s
+# 错过则开机后立即补跑
+Persistent=true
+# 随机延迟 5s 避免与其他 timer 冲突
+RandomizedDelaySec=5
+
+[Install]
+WantedBy=timers.target

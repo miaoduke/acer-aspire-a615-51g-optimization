@@ -1,0 +1,35 @@
+# =============================================================================
+# .gitignore — 系统控制台 v2.0（2026-09-04 C1）
+# =============================================================================
+# 🔴 红线：会话记录/ 永不入库
+#   - 含 sudo 凭据明文（2 个 md 各 201 处）
+#   - 含完整 AI 对话历史（2.4M），属个人数据非项目资产
+会话记录/
+
+# Python 运行缓存
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# 运行时数据（机器特定，不入库；目录保留）
+data/perf/
+data/charge_curve_*.tsv
+data/console.log
+data/snapshot_log.txt
+data/snapshots/
+data/battery_usage.json
+
+# 备份产物（历史快照，git 管理后由历史取代）
+.deploy_backup_*/
+*.bak
+*.bak_*
+*.bak2_*
+*.bak3_*
+*.bak_pre-v2.0
+
+# 归档/临时
+*.tar.gz
+*.zip
+tmp/
+*.pid

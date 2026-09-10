@@ -1,0 +1,32 @@
+pre_install() {
+    echo ">>> system-console v2.0 安装中..."
+    echo ">>> 注意: 需要 msr 模块 (sudo modprobe msr)"
+    echo ">>> 注意: 需要加载 intel_rapl 模块"
+}
+
+post_install() {
+    echo ">>> system-console v2.0 已安装到 /opt/system-console"
+    echo ""
+    echo "后续步骤："
+    echo "  1. 加载 MSR 模块: sudo modprobe msr"
+    echo "  2. 启用 deadman 守护: sudo systemctl enable --now msr_deadman.timer"
+    echo "  3. 启动 GUI: system-console"
+    echo "  4. 健康检查: system-console-check"
+}
+
+pre_upgrade() {
+    echo ">>> 升级前：停止运行中的服务"
+    systemctl stop msr_deadman.timer 2>/dev/null || true
+}
+
+post_upgrade() {
+    echo ">>> 升级后：重启服务"
+    systemctl daemon-reload
+    systemctl start msr_deadman.timer 2>/dev/null || true
+}
+
+pre_remove() {
+    echo ">>> 卸载前：停止服务"
+    systemctl stop msr_deadman.timer 2>/dev/null || true
+    systemctl disable msr_deadman.timer 2>/dev/null || true
+}

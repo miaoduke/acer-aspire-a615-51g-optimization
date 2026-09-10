@@ -1,0 +1,16 @@
+[Unit]
+Description=MSR undervolt deadman switch — auto revert on high temp
+# 必须在 thermal-guard 之后运行，避免状态冲突
+After=thermal-guard.service
+# 但要在 undervolt 之后（防止覆盖用户的主动降压设置）
+After=undervolt.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/msr_deadman.sh
+RemainAfterExit=no
+# 安全: 仅 root 运行
+User=root
+
+[Install]
+WantedBy=multi-user.target

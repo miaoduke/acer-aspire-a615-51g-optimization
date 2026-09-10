@@ -1,3 +1,0 @@
-timestamp	datetime	cpu_freq_max	cpu_freq_avg	cpu_temp	cpu_usage	pkg_w	core_w	uncore_w	dram_w	th_thermal	th_power	th_current	th_vr_th	th_vr_cur	pl1	pl2	bd_prochot	gpu_util	gpu_temp	gpu_power	mem_used	mem_total	mem_pct	net_rx	net_tx	disk_read	disk_write
-1787456877.6537297	11:47:57	3399	1898.75	27.8	0.0	0	0	0	0	0	0	0	0	0	False	False	False	0	0	0	1556	11830	13.153000845308538	0	0	0	0
-1787456909.6060865	11:48:29	3399	1212.125	27.8	6.315985213786217	7.505387234878603	2.815763357164589	0.21265330230174778	0.5838603825150087	0	0	0	0	0	False	False	False	0	0	0	1335	11830	11.28486897717667	0	0	0	0

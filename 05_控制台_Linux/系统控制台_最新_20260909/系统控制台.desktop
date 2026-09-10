@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=系统控制台
+GenericName=Power & Thermal Console
+Comment=Acer A615-51G 电源与散热控制台（监控 + 场景切换 + 调优）
+Exec=/home/<USER>/.local/share/系统控制台/启动控制台.sh
+Path=/home/<USER>/.local/share/系统控制台
+Icon=utilities-system-monitor
+Terminal=false
+Categories=Utility;System;
+Keywords=power;battery;thermal;undervolt;cpu;电源;电池;散热;降压
+StartupNotify=true
+StartupWMClass=console.py

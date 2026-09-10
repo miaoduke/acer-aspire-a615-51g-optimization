@@ -1,0 +1,95 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-0 gir1.2-gtk-3.0 xvfb
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml pytest
+
+    - name: Run profile tests
+      run: |
+        python tests/test_phase2_profile.py
+
+    - name: Run integration tests
+      run: |
+        python tests/test_phase2_integration.py
+
+    - name: Run plugin tests
+      run: |
+        python tests/test_phase2_plugin.py
+
+    - name: Run GUI logic tests
+      run: |
+        python tests/test_phase2_gui.py
+
+    - name: Run GUI render tests (Xvfb)
+      run: |
+        xvfb-run -a python tests/test_phase2_gui_render.py
+
+    - name: Run complete tests
+      run: |
+        python tests/test_phase2_complete.py
+
+    - name: Run shellcheck (if available)
+      run: |
+        if command -v shellcheck >/dev/null 2>&1; then
+          shellcheck backend/*.sh scripts/*.sh
+        else
+          echo "shellcheck not installed, skipping"
+        fi
+
+    - name: Run safeguard regression tests (P0-1/P1-1)
+      run: |
+        bash tests/test_p1_safeguard.sh
+
+    - name: Validate install.sh syntax
+      run: |
+        bash -n install.sh
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+    with:
+      python-version: '3.11'
+
+    - name: Check for double-sudo
+      run: |
+        python scripts/check_double_sudo.py .
+
+    - name: Validate all profiles
+      run: |
+        for p in ac-perf ac-bal ac-quiet bat-save bat-bal bat-perf balanced user_custom; do
+          python src/core/profile.py --validate "$p" || exit 1
+        done
+
+    - name: List all plugins
+      run: |
+        python src/core/plugin.py --list
