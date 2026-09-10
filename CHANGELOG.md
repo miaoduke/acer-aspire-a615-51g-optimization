@@ -31,3 +31,4 @@
 - 清理上次发布误入库的运行时产物：旧控制台 `data/perf/*.tsv`、`charge_curve_*.tsv`、`data/snapshot_log.txt`、`backend/*.bak` 随 v1 目录一并移除。
 - **外链处置**：原 `github.com/hackdale/system-console`（虚构、404）与 AUR 徽章已从 README/PKGBUILD 移除，仓库地址改指真实 `miaoduke/acer-aspire-a615-51g-optimization`；AUR 明确标注"尚未发布、请走源码安装"。
 - 根 README 双语更新当前定稿、权威入口、目录树、05_控制台_Linux 说明、运行位置/双副本架构注记（遵循"纠错不删除"，-80mV 历史保留）。
+- **根 README 完整性复扫补漏（2026-09-10）**：修正 7 处 v1 残留——日志路径改为 v2.0 运行位置 `~/.local/share/系统控制台/data/console.log`；坑 1 加更正横幅（两 v1 目录已删，v2.0 为唯一主版本）；`.desktop` 安装「两处」→「三处」（桌面/菜单/程序目录自引用，`APP_DIR` 动态生成）；部署命令改为 `sudo bash install.sh`（v2.0 无 `--check` 参数）；脱敏文件计数 22 → 23（复扫结果）；目录树标注 `99_存档_只读` 与 `系统控制台_latest` 仅本地未入库；「第 4、8 行」→「第 4、8 节」。
