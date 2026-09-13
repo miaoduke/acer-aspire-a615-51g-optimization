@@ -268,6 +268,9 @@ def get_loader() -> ProfileLoader:
         else:
             cfg = Config.get()
             builtin = Path(cfg.base_dir) / BUILTIN_PROFILE_DIR
+            if not builtin.is_dir():
+                # 未部署（CI / 新克隆无 ~/.config）时回落到项目内 profiles/
+                builtin = Path(__file__).parent.parent.parent / BUILTIN_PROFILE_DIR
             user = Path(USER_PROFILE_DIR).expanduser()
             _loader = ProfileLoader(builtin, user)
 

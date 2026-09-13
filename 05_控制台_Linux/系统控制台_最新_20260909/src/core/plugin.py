@@ -261,6 +261,9 @@ def get_registry() -> PluginRegistry:
             except Exception:
                 # 兑底：硬编码默认路径
                 builtin = Path(__file__).parent.parent.parent / BUILTIN_PLUGIN_DIR
+        if not builtin.is_dir():
+            # 未部署（CI / 新克隆无 ~/.config）时回落到项目内 plugins/
+            builtin = Path(__file__).parent.parent.parent / BUILTIN_PLUGIN_DIR
         user = Path(USER_PLUGIN_DIR).expanduser()
         _registry = PluginRegistry(builtin, user)
     return _registry
