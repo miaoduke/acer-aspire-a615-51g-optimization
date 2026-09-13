@@ -52,7 +52,11 @@
 
 set -u
 
-SAFE_MV=50          # 异常时回退到的保守值
+# ponytail: 异常关机回退值。ceiling: 写死单一档位, 不随当前降压深度自适应;
+# upgrade: 下探 -110 以上时同步上调(回退目标应落在"上一已知稳定档", 经验值为
+# 当前深度 -20mV)。2026-09-13: -100 经 45h 观察期+满载验收(36045 万迭代, MCE 全零)
+# 后由 50 升至 80 —— 回退踢回 -50 过于保守, -80 是"稳定甜点位下方一档"。
+SAFE_MV=80
 TEMP_TARGET=98
 MARK=/var/log/uv_safeguard.triggered
 LOG=/var/log/uv_safeguard.log

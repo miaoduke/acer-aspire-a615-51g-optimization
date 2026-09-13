@@ -22,6 +22,23 @@ except ImportError:
 SCENE_SCRIPT = os.path.join(BASE, "scripts", "场景管理.sh")
 M3_SCRIPT = os.path.join(BASE, "backend", "m3_gui.sh")
 
+
+def _alias_script(real_path, alias_name):
+    """sudoers 无法匹配含空格路径 → 特权脚本走 /usr/local/bin 无空格别名。
+    别名存在且指向本文件才用；缺失/陈旧时回退原路径（提权弹窗兜底）。"""
+    alias = "/usr/local/bin/" + alias_name
+    try:
+        if os.path.isfile(real_path) and os.path.samefile(alias, real_path):
+            return alias
+    except OSError:
+        pass
+    return real_path
+
+
+# sudoers 免密别名(由 install.sh [1/7] 创建): 无空格路径, sudo -n 直接匹配
+SCENE_SCRIPT = _alias_script(SCENE_SCRIPT, "sc-scene-switch.sh")
+M3_SCRIPT = _alias_script(M3_SCRIPT, "sc-m3-gui.sh")
+
 # 场景定义：key -> (名称, 说明)
 SCENES = {
     "ac-perf":  ("插电高性能", "编译/渲染/跑分 · PL=25W · performance"),
@@ -164,8 +181,9 @@ SERVICES = [
     # 2026-08-31 修正: intel-undervolt 服务不存在(真机名 undervolt)、
     # 补真机在跑的 undervolt-resume/thermal-guard/uv-safeguard/uv-daily-check
     # 2026-09-01: 降压描述同步 -100mV 定稿
+    # 2026-09-11 修正: 移除 turbo-enable(单元从未存在,幽灵条目永远 inactive 徒增困惑;
+    # turbo 由场景管理直接管理) + rasdaemon 补录(2026-09-11 重装恢复)
     ("cpu-power-limit", T("PL1/PL2 功耗限制")),
-    ("turbo-enable", T("Turbo 开启守护")),
     ("undervolt", T("CPU/GPU 降压 (-100mV)")),
     ("undervolt-resume", T("挂起后恢复降压")),
     ("acdc-profile", T("AC/DC 自动切换")),
@@ -180,8 +198,8 @@ SERVICES = [
 EXPECTED_IDLE = {
     "undervolt-resume": T("oneshot：仅在挂起恢复时运行"),
     "uv-safeguard": T("oneshot：仅在启动时检测异常关机"),
-    "thermald": T("ac-perf 性能模式主动停止（避免干扰 25W 满血）"),
-    "power-profiles-daemon": T("未安装：governor/EPP 由场景脚本直接管理"),
+    "thermald": T("已由自研 thermal-guard 替代（85°C 降 PL1），避免双热守护打架"),
+    "power-profiles-daemon": T("已 mask：与场景管理的 EPP/governor 冲突（2026-09-11）"),
 }
 
 
@@ -419,8 +437,8 @@ def temp_module(load):
     """加载/卸载 acer-wmi-battery 模块（SMI 排查期手动控制）。
     加载后 sysfs 温度节点出现；卸载后消失。"""
     if load:
-        return _run(["modprobe", "acer_wmi_battery"], timeout=10)
-    return _run(["modprobe", "-r", "acer_wmi_battery"], timeout=10)
+        return _run(["/usr/sbin/modprobe", "acer_wmi_battery"], timeout=10)
+    return _run(["/usr/sbin/modprobe", "-r", "acer_wmi_battery"], timeout=10)
 
 
 # 风扇强制冷总开关 —— 默认 False（死机史铁律：fan_boost 即死机 #4 操作，永久禁用）
@@ -569,11 +587,10 @@ def sudo_ok():
     core = (os.path.exists(S + "system-console")
             and (os.path.exists(S + "system-console-thermal")
                  or os.path.exists(S + "99-thermal-ctl")))  # 两种历史命名都认
-    # 可选: reboot / kernel-guard / 电池温度(modprobe) —— 有则提示不强求
-    optional_any = any(os.path.exists(S + f) for f in (
-        "system-console-reboot", "system-console-kernel-guard",
-        "99-acer-battery-temp"))
-    return core and optional_any
+    # 2026-09-11 修复: optional_any(reboot/kernel-guard/电池温度)是历史手动配置件,
+    # 重装后不存在 → 启动误报"白名单未配置"弹窗。注释本意"有则提示不强求"，
+    # 却被写成了硬门槛。核心项齐即视为已配置, 可选项不再影响判定。
+    return core
 
 
 # ============================================================================
@@ -586,9 +603,8 @@ def _find_script(*rel):
     cands = [
         os.path.join(BASE, *rel),
         os.path.expanduser("~/.local/share/系统控制台/" + "/".join(rel)),
-        # 归档回退：自动探测数据盘挂载点（WS/WS1 漂移兼容）
+        # 归档回退：自动探测数据盘挂载点（WS 盘历史归档; WS1 盘已不存在,2026-09-11 审计移除死路径）
         "/media/<USER>/WS/acer 性能优化方案/03_Linux/性能优化方案_20260822/" + "/".join(rel),
-        "/media/<USER>/WS1/acer 性能优化方案/03_Linux/性能优化方案_20260822/" + "/".join(rel),
     ]
     for c in cands:
         if os.path.isfile(c):
@@ -684,7 +700,71 @@ def quiet_background(quiet=True):
 
 
 # ---------- 4. 跨机适配向导（重装/换机）----------
-ADAPT_SCRIPT = _find_script("backend", "adapt_test.sh")
+ADAPT_SCRIPT = _alias_script(_find_script("backend", "adapt_test.sh"), "sc-adapt-test.sh")
+# 降压调节(2026-09-11): core+cache 电气耦合必须同值, GPU 域独立; 落点 uv_set.sh
+# 做范围硬校验/原子改 service/应用后回读校验, 三重守护基准随 service 文件自动同步
+UV_SET_SCRIPT = _alias_script(_find_script("backend", "uv_set.sh"), "sc-uv-set.sh")
+# GRUB 启动菜单时间(2026-09-11): 备份+RECORDFAIL 同步+update-grub+cfg 校验
+GRUB_TIMEOUT_SCRIPT = _alias_script(_find_script("backend", "grub_timeout.sh"), "sc-grub-timeout.sh")
+
+
+def grub_timeout(seconds, style="menu"):
+    """设置 GRUB 启动菜单等待时间。seconds: 0=直接启动, 1-300; style: menu|hidden。
+    自动同步 GRUB_RECORDFAIL_TIMEOUT(异常关机后不再回退 30 秒默认)。
+    备份: /etc/default/grub.grubtime.bak。返回 (rc, out, err)。"""
+    return _run([GRUB_TIMEOUT_SCRIPT, str(seconds), style], timeout=90)
+
+
+def grub_timeout_current():
+    """读当前 GRUB_TIMEOUT / STYLE(纯文本读取, 无需 root)。返回 (timeout, style) 或 None。"""
+    try:
+        timeout, style = None, "menu"
+        with open("/etc/default/grub") as f:
+            for line in f:
+                if line.startswith("GRUB_TIMEOUT="):
+                    timeout = line.split("=", 1)[1].strip()
+                elif line.startswith("GRUB_TIMEOUT_STYLE="):
+                    style = line.split("=", 1)[1].strip()
+        return (timeout, style) if timeout is not None else None
+    except OSError:
+        return None
+
+
+def uv_set(core_mv, gpu_mv, temp_c=None):
+    """GUI 降压调节入口。返回 (rc, out, err)。
+    core_mv: core+cache 联动值(0 ~ -130mV); gpu_mv: GPU 域独立(0 ~ -130mV);
+    temp_c: 温度墙(60~105°C, None 不动)。
+    uv_set.sh: 越界拒绝 → 原子改 undervolt.service → 写 MSR → 回读校验(容差 4.25mV)
+    → 失败自动回滚。uv_safeguard/uv_daily_check/msr_deadman 从 service 文件 grep
+    --core 值, 改文件即同步三重守护基准。"""
+    args = [UV_SET_SCRIPT, str(core_mv), str(gpu_mv)]
+    if temp_c is not None:
+        args.append(str(temp_c))
+    return _run(args, timeout=30)
+
+
+def uv_read():
+    """读当前各域降压实测值(免密白名单)。返回 dict 或 None。"""
+    rc, out, _ = _run(["/usr/local/bin/undervolt", "--read"], timeout=10)
+    if rc != 0:
+        return None
+    d = {}
+    for line in out.splitlines():
+        if ":" in line:
+            k, _, v = line.partition(":")
+            k = k.strip()
+            if k in ("core", "gpu", "cache", "uncore"):
+                try:
+                    d[k] = float(v.strip().rstrip("mV").strip())
+                except ValueError:
+                    pass
+            elif k == "temperature target":
+                # 输出形如 "-2 (98C)": 括号里的才是温度墙 °C
+                import re
+                m = re.search(r"\((\d+)C\)", v)
+                if m:
+                    d["temp_target"] = int(m.group(1))
+    return d or None
 
 
 def adapt_test(apply=False):
@@ -811,7 +891,7 @@ def boot_windows():
 
 
 # ---------- 6. 一键安装/修复（重装、换机后 GUI 内直接完成）----------
-INSTALL_SCRIPT = os.path.join(BASE, "install.sh")
+INSTALL_SCRIPT = _alias_script(os.path.join(BASE, "install.sh"), "sc-install.sh")
 
 
 def install_system():
@@ -820,4 +900,6 @@ def install_system():
     返回 (rc, out, err)。"""
     if not os.path.isfile(INSTALL_SCRIPT):
         return 1, "", "install.sh 不存在: %s" % INSTALL_SCRIPT
-    return _run(["bash", INSTALL_SCRIPT], timeout=180)
+    # 直接执行脚本本体: _run 内部 sudo -n 匹配的是别名路径(sudoers 白名单)，
+    # 不能再套 bash —— 否则 sudo 记录的是 /usr/bin/bash，白名单永远不匹配
+    return _run([INSTALL_SCRIPT], timeout=180)

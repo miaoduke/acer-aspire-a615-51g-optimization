@@ -258,16 +258,21 @@ class PerfDataManager:
                             # int() 转换失败被吞 → 残留 str → 后续 max()/排序崩溃
                             # "<' not supported between str and float"）
                             for k in row:
-                                if k not in ('timestamp', 'datetime'):
-                                    v = row[k]
+                                if k == 'datetime':
+                                    continue  # 唯一合法 str 列
+                                v = row[k]
+                                if k == 'timestamp':
+                                    row[k] = ts  # 2026-09-11 修复: ts 已是 float,
+                                    # 原"跳过不转"让文件路径的行残留 str timestamp,
+                                    # time.localtime()/sorted() 在 str vs float 上崩溃
+                                elif v in ('True', 'False'):
                                     # bool 字符串显式处理
-                                    if v in ('True', 'False'):
-                                        row[k] = 1 if v == 'True' else 0
-                                    else:
-                                        try:
-                                            row[k] = float(v) if '.' in v else int(v)
-                                        except Exception:
-                                            row[k] = 0.0  # 转换失败给默认 0，绝不残留 str
+                                    row[k] = 1 if v == 'True' else 0
+                                else:
+                                    try:
+                                        row[k] = float(v) if '.' in v else int(v)
+                                    except Exception:
+                                        row[k] = 0.0  # 转换失败给默认 0，绝不残留 str
                             results.append(row)
                         else:
                             break

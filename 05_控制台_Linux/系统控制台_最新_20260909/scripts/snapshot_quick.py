@@ -10,6 +10,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+# GUI 经 subprocess 调用本脚本时 cwd 任意 → 把项目根(脚本上级目录)插进 sys.path,
+# 否则 "from src.core.msr_reader import ..." 报 No module named 'src'(2026-09-11 修复)
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 
 def read(path, default="—"):
     try:
@@ -108,11 +112,17 @@ def snapshot():
 
     # 7. 服务状态
     section("项目服务")
+    # oneshot 型跑完即退, inactive 是正常态 → 用"·预期"标注, 不再误导成故障(2026-09-11)
     for s in ["undervolt", "acdc-profile", "cpu-power-limit", "thermal-guard",
-              "msr_deadman.timer", "uv-safeguard"]:
+              "msr_deadman.timer", "uv-daily-check.timer", "uv-safeguard", "rasdaemon"]:
         rc, out = cmd("systemctl", "is-active", s)
-        state = out if rc == 0 else "unknown"
-        icon = "✅" if state == "active" else "⚠" if state == "inactive" else "❌"
+        # is-active 对 oneshot 退出态返回 rc!=0 且 stdout 为空, 但 stderr 才有 "inactive"
+        # → rc!=0 时 stderr 即状态文本
+        state = out if (rc == 0 or out) else "inactive"
+        if state == "inactive" and s == "uv-safeguard":
+            icon, state = "✅", "inactive·预期(oneshot: 开机检测异常关机后退出)"
+        else:
+            icon = "✅" if state == "active" else "⚠" if state == "inactive" else "❌"
         print(f"  {icon} {s}: {state}")
 
     # 8. 限流状态（R4 集成）
@@ -128,11 +138,13 @@ def snapshot():
     section("MSR 降压")
     import shutil
     if shutil.which("undervolt"):
-        rc, out = cmd("undervolt", "--read")
+        # 2026-09-11 修复: undervolt 读 MSR 需要 root。原裸调用(无 sudo)永远失败,
+        # 误报"sudo 缓存过期"。改 sudo -n + 白名单(/usr/local/bin/undervolt), 失败时如实显示
+        rc, out = cmd("sudo", "-n", shutil.which("undervolt"), "--read")
         if rc == 0:
             print(f"  {out[:200]}")
         else:
-            print(f"  ⚠ undervolt --read 失败（sudo 缓存过期？）")
+            print(f"  ⚠ undervolt --read 失败: {out[:120]}")
     else:
         print(f"  undervolt 工具未安装")
 

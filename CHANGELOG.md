@@ -32,3 +32,33 @@
 - **外链处置**：原 `github.com/hackdale/system-console`（虚构、404）与 AUR 徽章已从 README/PKGBUILD 移除，仓库地址改指真实 `miaoduke/acer-aspire-a615-51g-optimization`；AUR 明确标注"尚未发布、请走源码安装"。
 - 根 README 双语更新当前定稿、权威入口、目录树、05_控制台_Linux 说明、运行位置/双副本架构注记（遵循"纠错不删除"，-80mV 历史保留）。
 - **根 README 完整性复扫补漏（2026-09-10）**：修正 7 处 v1 残留——日志路径改为 v2.0 运行位置 `~/.local/share/系统控制台/data/console.log`；坑 1 加更正横幅（两 v1 目录已删，v2.0 为唯一主版本）；`.desktop` 安装「两处」→「三处」（桌面/菜单/程序目录自引用，`APP_DIR` 动态生成）；部署命令改为 `sudo bash install.sh`（v2.0 无 `--check` 参数）；脱敏文件计数 22 → 23（复扫结果）；目录树标注 `99_存档_只读` 与 `系统控制台_latest` 仅本地未入库；「第 4、8 行」→「第 4、8 节」。
+
+## [主要内容] 重装恢复同步 2026-09-13
+
+**Linux 重装后恢复工程回灌归档（`05_控制台_Linux/系统控制台_最新_20260909/`，+885 行/27 文件修改 + 3 新增）**
+
+**重装恢复工程（根因：项目路径含空格 + 重装部署物丢失）**
+- sudoers 无法匹配含空格路径 → 全部特权脚本走 `/usr/local/bin/sc-*.sh` 无空格别名符号链接，controller `_alias_script()` 解析（缺失/陈旧回退原路径）。
+- 脚本自定位 `dirname $0` 经符号链接算错 → 全部 `readlink -f`；服务/`.desktop` 的 Exec 含空格加引号。
+- `install.sh` [0/7] 一键全自动恢复：系统包缺则自装（msr-tools/rasdaemon/perl-DBI 系列）+ `/etc/default/rasdaemon` 环境文件 + undervolt 工具 pip 自装入 `.venv-tools` + undervolt/undervolt-resume 服务缺失生成（保留现值，uv_set.sh GUI 调节不覆盖）+ thermal_ctl/thermal_guard 自动部署 + acer-wmi-battery DKMS 自注册。
+- `sudo_ok()` 误报修复（optional_any 历史手动件不再作为硬门槛）；服务清单移除幽灵条目 turbo-enable。
+
+**新功能**
+- **MSR 降压 GUI 调节**（`backend/uv_set.sh` + ui_advanced 滑块）：core/cache 电气同轨联动、GPU 独立域、温度墙；范围硬校验 0~-130mV、原子改 service、应用后回读校验失败自动回滚、`undervolt-resume.service` 同步（修复挂起唤醒旧值重打）、三重守护基准随 service 自动同步、`/var/log/uv_set.log` 留痕。
+- **GRUB 启动菜单时间**（`backend/grub_timeout.sh`）：秒数 + menu/hidden + RECORDFAIL_TIMEOUT 同步，备份 `.grubtime.bak` + update-grub + cfg 校验。
+- **开机自启开关**（维护页 Gtk.Switch，`~/.config/autostart/system-console.desktop`）。
+- **应用功耗排行增强**：内存 MB 列（cgroup v2 memory.current）、过滤 session 层级噪音、对话框级 Collector 差分（修复首次差分功耗列恒空）、RAPL 回退 MSR 0x611（内核 7.0 不再暴露 sysfs energy_uw，32bit 回绕补偿）。
+- **MSR 限流读取升级**（09-13）：免密白名单下 `read_all` 单次全核读，缓存 60s→10s，熔断改 60s 半程自动恢复，dashboard 加熔断角标。
+
+**-100mV 重装后复验收（2026-09-13）**
+- 45h 观察期（09-11 14:19 应用 → 09-13 11:27，4 次成功应用记录）+ 满载复验收：360,446,487 迭代 / 1802.2 万次/秒（超历史全部记录），MCE/Memory/PCIe AER/Extlog 四类零错误，满载包温 71°C。
+- **安全网 SAFE_MV 50 → 80**（`uv_safeguard.sh`：回退目标改为「上一已知稳定档」语义）。
+
+**i18n**
+- 穷尽 AST 清查新增 85+ 词条（2026-09 全部新功能 + 历史欠账），总词条 453 → **740+**，最终审计 0 漏网。
+
+**同步治理（本次提交执行）**
+- **重新脱敏 9 文件 20 处回退**（Linux 重装后从真机生产副本回灌，与上次 v1→v2.0 同步同源）：`hackdale→<USER>`（controller/config/NOT_API_WEBUI/sync 脚本/install.sh DKMS 段改用动态 `$REAL_USER`/`$REAL_HOME`）、`.desktop` 恢复运行位置占位、PKGBUILD/README 恢复真实仓库地址与占位维护者、AUR 恢复「尚未发布」声明与注释化 `yay` 示例。
+- **CI 工作流提升至仓库根** `.github/workflows/test.yml`（嵌套目录内 Actions 不执行）：`working-directory` 适配 + `python`→`python3` 修正，Actions 现已真实运行。
+- 嵌套 `.gitignore` 补 `.venv-tools/` 与 `data/hardware_profile.json`（adapt_test.sh 探测产物）。
+- 根 README 双语更新：09-13 重装恢复通告、定稿表（内核 31、-100mV 复验收、SAFE_MV 80、降压 GUI 节）、第 6 节新特性清单。

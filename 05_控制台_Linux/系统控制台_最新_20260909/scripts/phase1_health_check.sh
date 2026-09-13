@@ -31,7 +31,7 @@ echo ""
 # 1. systemd 服务状态
 echo "[1] systemd 服务状态"
 for s in undervolt acdc-profile cpu-power-limit thermal-guard msr_deadman.timer; do
-    state=$(systemctl is-active "$s" 2>/dev/null)
+    state=$(systemctl is-active "$s" 2>/dev/null || true)
     if [ "$state" = "active" ]; then
         check_pass "$s: $state"
     else

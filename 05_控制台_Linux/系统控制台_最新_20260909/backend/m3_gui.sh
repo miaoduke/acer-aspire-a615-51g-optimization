@@ -64,7 +64,7 @@ mode_off() {
   LAST_DC=bat-bal
   [ -f "$DEFAULT_SCENE" ] && . "$DEFAULT_SCENE"
   # 相对路径: 脚本在 backend/, 场景管理.sh 在上级 scripts/
-  DIR="$(cd "$(dirname "$0")" && pwd)"
+  DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"  # readlink: 经 sc-m3-gui.sh 别名调用时解析真实位置
   SCENE_MGR="$DIR/../scripts/场景管理.sh"
   if [ "$(ac_online)" = "1" ]; then
     "$SCENE_MGR" "$LAST_AC" >/dev/null 2>&1

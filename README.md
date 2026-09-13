@@ -39,6 +39,8 @@
 
 > **⚠️ 2026-09-10 控制台同步通告 / Console v2.0 Sync Notice：** Linux 控制台由 **v1 → v2.0**，代码库整体迁移至 `05_控制台_Linux/系统控制台_最新_20260909/`。核心变化：**降压定稿从 -80mV → -100mV**（D7 观察期 4 天验收通过，实测 core -99.61mV），新增 profile 配置化 / plugin 抽象 / 中英双语 i18n / 12 套件 112 用例 / CI / AUR 打包模板，并引入 MSR 降压三重守护（msr_deadman + uv-safeguard + uv-daily-check）。本节下文的 v1 细节仍保留作历史记录，均以 v2.0 为准。 / *The Linux console was upgraded v1 → v2.0, migrated to `05_控制台_Linux/系统控制台_最新_20260909/`. Final undervolt -80mV → -100mV (D7-accepted, measured core -99.61mV); added profile config, plugin abstraction, bilingual i18n, 12 suites / 112 cases, CI, and an AUR template; plus a triple undervolt safeguard (msr_deadman + uv-safeguard + uv-daily-check). Older v1 details below are kept as history — v2.0 is authoritative.*
 
+> **🟩 2026-09-13 重装恢复同步通告 / Reinstall-Recovery Sync Notice：** Linux 重装后完成恢复工程并回灌归档：install.sh 升级为**一键全自动恢复**（系统包自装 + undervolt 工具 pip 自装 + 服务/DKMS 自注册），新增 **MSR 降压 GUI 调节**（`uv_set.sh` 白名单落点，0~-130mV 硬校验 + 原子改 service + 回读校验回滚 + 三重守护基准自动同步）与 **GRUB 启动菜单时间**（`grub_timeout.sh`）两个 GUI 功能；修复一族群 bug（sudoers 空格路径别名 `sc-*.sh` 体系、`sudo_ok()` 误报、perf 日志 str/float 崩溃、RAPL 0x611 回退等）；-100mV 重装后 **45h 观察期 + 满载复验收通过**（360,446,487 迭代 / 1802.2 万/s，超历史全部记录，MCE 全零），**安全网 SAFE_MV 50 → 80**。同步将 CI 工作流提升至仓库根（Actions 现已真实运行）。/ *After a Linux reinstall, the recovery project landed: install.sh became a one-shot fully-automatic restore (auto apt packages + pip undervolt tool + services/DKMS registration); two new GUI features — MSR undervolt sliders (`uv_set.sh`, 0~-130mV hard validation, atomic service edit, readback-verify rollback, guards auto-sync) and GRUB menu timeout (`grub_timeout.sh`); a family of bug fixes (space-safe `sc-*.sh` sudoers aliases, `sudo_ok()` false alarm, perf-log str/float crash, RAPL 0x611 fallback); -100mV re-accepted after 45h observation + full-load re-validation (360.4M iterations, 18.02M ops/s, zero MCE) with the safety net raised SAFE_MV 50 → 80. The CI workflow was also elevated to the repo root (Actions now actually runs).*
+
 ---
 
 ## 一、新结构一览 / 1. New Structure Overview
@@ -115,22 +117,24 @@ acer 性能优化方案/
 
 ## 四、当前定稿（真机实测）/ 4. Current Final Spec (real-hardware measured)
 
-> **🟩 2026-09-10 更新 / Updated 2026-09-10：** 降压定稿由 **-80mV → -100mV**（D7 验收通过，2026-09-07）。下表已更新为 v2.0 终值；-80mV 记录仍保留于下文各历史章节。 / *Undervolt final changed -80mV → -100mV (D7 accepted 2026-09-07). Table below now reflects v2.0 final values; -80mV history is kept under the historical sections.* **验收依据 (Evidence)：** `05_控制台_Linux/系统控制台_最新_20260909/data/phase1/D7_验收报告_20260907.md`
+> **🟩 2026-09-13 重装恢复后复验收 / Re-accepted 2026-09-13 (post-reinstall)：** -100mV 三域定稿经**45h 观察期 + 满载复验收**再次确认（360,446,487 迭代 / 1802.2 万次/秒，超历史全部记录；MCE/Memory/PCIe AER/Extlog 四类零错误，uv_safeguard verdict=CLEAN；满载包温 71°C）。安全网回退值同步上调 **SAFE_MV 50 → 80**（「上一已知稳定档」语义）。记录见 `data/phase2/STATUS.md` 末节。 / *The -100mV three-domain final was re-confirmed after the reinstall via a 45h observation window + full-load re-validation (360,446,487 iterations / 18.02M ops/s, beating all historical records; MCE/Memory/PCIe AER/Extlog all zero, uv_safeguard verdict=CLEAN; full-load package temp 71°C). The safety-net revert target was raised SAFE_MV 50 → 80 ("last known-stable tier" semantics). Recorded at the end of `data/phase2/STATUS.md`.*
 
 | 项 (Item) | 值 (Value) |
 |---|---|
-| 内核 (Kernel) | 7.0.0-30-generic |
-| **降压 (Undervolt)** | **-100mV**（实测 core -99.61mV；D7 观察期 2026-09-03→09-07 验收通过，16/16 项）🟩 |
+| 内核 (Kernel) | 7.0.0-31-generic（2026-09-11 重装后）|
+| **降压 (Undervolt)** | **-100mV 三域**（core/cache/gpu；D7 验收 2026-09-07 + 重装后复验收 2026-09-13，45h 观察 + 满载 1802.2 万/s）🟩 |
 | PL1/PL2 | 25W / 25W |
 | C-state | `max_cstate=4` |
 | Turbo | ON（双守护 / dual-guard） |
 | GPU | intel 集显 |
-| 服务 (Services) | cpu-power-limit / turbo-enable / undervolt / undervolt-resume / acdc-profile / thermal-guard / rasdaemon / **uv-safeguard** / **uv-daily-check** / **msr_deadman** |
+| 服务 (Services) | cpu-power-limit / undervolt / undervolt-resume / acdc-profile / thermal-guard / rasdaemon / **uv-safeguard** / **uv-daily-check** / **msr_deadman**（turbo-enable 幽灵条目已于 09-11 移除，turbo 由场景管理直接控制）|
 
 **自动化保障 (Automation safeguards)：**
-- `uv-safeguard` — 异常关机三级判定（CLEAN/CRASH_REVERT/WATCH），自动回退并防死机循环 (three-tier verdict on abnormal shutdown: CLEAN/CRASH_REVERT/WATCH, prevents crash loops; D7 累计 CLEAN×6 + WATCH×1，零误回退)
+- `uv-safeguard` — 异常关机三级判定（CLEAN/CRASH_REVERT/WATCH），自动回退并防死机循环 (three-tier verdict on abnormal shutdown: CLEAN/CRASH_REVERT/WATCH, prevents crash loops; D7 累计 CLEAN×6 + WATCH×1，零误回退；**回退目标 SAFE_MV=80**，2026-09-13 上调)
 - `uv-daily-check.timer` — 每日 10:00 + 开机巡检，MCE 权威源 `ras-mc-ctl`（替代 mcelog/AER，零误报）(daily + boot check of MCE via `ras-mc-ctl`; D7 16 次运行全部 `MCE 0(+0)`)
 - `msr_deadman.timer` — 30 秒巡检，≥95°C 自动回退（30s patrol, auto-revert at ≥95°C; D7 期间 1523+ 次巡检零误触发）
+
+**降压 GUI 调节 (Undervolt GUI, 2026-09-11+)：** 高级页滑块直接调 core/cache（电气同轨联动）与 GPU 独立域（0~-130mV + 温度墙），落点 `uv_set.sh` 白名单脚本：范围硬校验、原子改 `undervolt.service`、应用后回读校验失败自动回滚、挂起唤醒值同步、三重守护基准随 service 自动同步、`/var/log/uv_set.log` 全程留痕。 / *Sliders on the Advanced page drive core/cache (same-rail, forced equal) and the independent GPU domain (0~-130mV + temp wall), landing in the whitelisted `uv_set.sh`: hard range validation, atomic service edit, auto-rollback on readback mismatch, suspend/resume sync, guards re-sync from the service file, and full audit trail in `/var/log/uv_set.log`.*
 
 复测 (Re-test)：`sudo bash 05_控制台_Linux/系统控制台_最新_20260909/backend/collect_ground_truth.sh`
 
@@ -172,14 +176,17 @@ Windows 侧专属资产。
 C# / WinForms **v6.8**（2026-08-28），六页 GUI。源码 5 个 .cs + 编译产物 + 10 个依赖 DLL。`README.md` 标注 v6.8，SELFTEST PASS、test_suite FAIL=0。已知瑕疵：`启动器.bat` 与 `启动控制台.cmd` 内容近似重复（已记录未处理）。
 
 ### 05_控制台_Linux ⭐ GTK3 控制台（v2.0 主版本 / main version）
-**🏆 主版本：** `系统控制台_最新_20260909/`（**v2.0**，2026-09-10 同步；旧 v1 `系统控制台/` 已随本次同步移除）。Python3 + GTK3 + systemd（约 110 个发布文件，12 套件 112 用例全绿）。分层：采集 / 控制 / UI(7 页) / 领域(src/core) / 后端(backend) / 配置(profiles) / 插件(plugins)。
-- **v2.0 新架构**：profile 配置化（8 内置 + 用户自定义 + INI 继承）、plugin 抽象（TuneD 启发）、中英双语 i18n（453 词条，`T()` 运行时切换）、GUI 7 页
-- **MSR 降压三重守护**：`msr_deadman`(30s 巡检/95°C 回退) + `uv-safeguard`(异常关机三级判定) + `uv-daily-check`(ras-mc-ctl 权威 MCE)
+**🏆 主版本：** `系统控制台_最新_20260909/`（**v2.0**，2026-09-13 重装恢复后同步；旧 v1 `系统控制台/` 已移除）。Python3 + GTK3 + systemd（12 套件 112 用例双绿）。分层：采集 / 控制 / UI(7 页) / 领域(src/core) / 后端(backend) / 配置(profiles) / 插件(plugins)。
+- **v2.0 新架构**：profile 配置化（8 内置 + 用户自定义 + INI 继承）、plugin 抽象（TuneD 启发）、中英双语 i18n（**740+ 词条**，`T()` 运行时切换，2026-09-11 穷尽审计 0 漏网）、GUI 7 页
+- **MSR 降压三重守护**：`msr_deadman`(30s 巡检/95°C 回退) + `uv-safeguard`(异常关机三级判定，回退档 SAFE_MV=80) + `uv-daily-check`(ras-mc-ctl 权威 MCE)
+- **降压 GUI 调节（2026-09-11+）**：高级页滑块调 core/cache + GPU 独立域，落点 `backend/uv_set.sh`（范围硬校验/原子改 service/回读校验回滚/守护基准自动同步）
+- **GRUB 启动菜单时间（2026-09-11+）**：`backend/grub_timeout.sh`（秒数 + 显示方式 + RECORDFAIL 同步，备份可还原）
+- **一键重装恢复（2026-09-11+）**：`install.sh` [0/7] 系统包/undervolt 工具/服务/DKMS 全自动；sudoers 空格路径走 `/usr/local/bin/sc-*.sh` 别名体系
 - **AC/DC 自动切换**：acdc-profile v9，含 GPU GT 频率联动（AC 1100 / DC 700 MHz）
 - 服务：undervolt / undervolt-resume / acdc-profile / cpu-power-limit / thermal-guard(85°C 降 PL1) / msr_deadman / uv-safeguard / uv-daily-check
-- `aur/PKGBUILD`：AUR 打包**模板**（尚未发布到 AUR，使用请走源码 `install.sh`）
+- `aur/PKGBUILD`：AUR 打包**模板**（尚未发布到 AUR，使用请走源码 `sudo bash install.sh`）
 - 兼容学习了 `backend/check_ctl_consistency.sh`（检出「UI 有控件但后端无分支」）与 `backend/collect_ground_truth.sh`（真机真值采集）思路
-- 详阅新控制台自身 `README.md` 与 `data/phase1/D7_验收报告_20260907.md`
+- 详阅新控制台自身 `README.md`（含 2026-09-10/11 更新日志）与 `data/phase1/D7_验收报告_20260907.md`
 
 ### 99_存档_只读 ⛔ (99_Archive_ReadOnly)
 **历史存档，不应再改动或引用其结论**：

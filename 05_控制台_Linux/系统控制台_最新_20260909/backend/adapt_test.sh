@@ -5,7 +5,7 @@
 #   无参数 = 仅测试输出报告
 #   apply  = 测试 + 应用可安全自动化的配置
 
-BASE="$(cd "$(dirname "$0")/.." && pwd)"
+BASE="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"  # readlink: 经 sc-adapt-test.sh 别名调用时解析真实位置
 PASS=0; FAIL=0; SKIP=0
 
 ok()   { echo "  ✓ $1"; PASS=$((PASS+1)); }

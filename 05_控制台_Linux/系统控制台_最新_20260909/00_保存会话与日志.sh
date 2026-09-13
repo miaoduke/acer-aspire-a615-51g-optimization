@@ -17,7 +17,7 @@
 set -u
 
 # 自动定位 BASE(脚本所在目录), 支持用户名变化
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"  # readlink: 经 sc-backup.sh 别名调用时解析真实位置
 BASE="$SCRIPT_DIR"
 STAMP=$(date +%Y%m%d_%H%M%S)
 DIR="$BASE/$STAMP"

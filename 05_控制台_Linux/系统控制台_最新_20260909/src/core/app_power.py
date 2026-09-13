@@ -17,11 +17,11 @@ class AppPowerInfo:
     """单个应用的功耗信息"""
     name: str              # 应用名（从 cgroup 路径提取）
     cgroup_path: str       # 完整 cgroup 路径
-    cpu_time_sec: float    # CPU 累计时间秒
     cpu_pct: float         # CPU 使用率 %
     power_w: float         # 估算功耗 W
     pct_of_total: float    # 占总功耗百分比
     is_app: bool           # 是否为图形应用(.scope)
+    mem_mb: float = 0      # 内存占用 MB（2026-09-11 维度增强: memory.current/1MiB）
 
 
 class AppPowerMonitor:
@@ -32,7 +32,6 @@ class AppPowerMonitor:
     def __init__(self):
         self._prev_cpu_times: Dict[str, float] = {}
         self._prev_timestamp: float = 0
-        self._total_power_w: float = 0
     
     def _read_cpu_stat(self, cgroup_path: str) -> Optional[float]:
         """读取 cgroup 的 CPU 累计时间（usage_usec）"""
@@ -93,6 +92,14 @@ class AppPowerMonitor:
     def _is_graphical_app(self, cgroup_path: str) -> bool:
         """判断是否为图形应用"""
         return ".scope" in cgroup_path and "app-" in cgroup_path
+
+    def _read_mem_mb(self, cgroup_path: str) -> float:
+        """cgroup v2 memory.current → MB（2026-09-11 维度增强）"""
+        try:
+            with open(Path(cgroup_path) / "memory.current") as f:
+                return int(f.read().strip()) / 1048576.0
+        except (OSError, ValueError):
+            return 0.0
     
     def scan(self, package_power_w: float = None) -> List[AppPowerInfo]:
         """
@@ -142,16 +149,26 @@ class AppPowerMonitor:
                     cpu_pct = (delta / dt / ncores * 100) if dt > 0 else 0
                     cpu_pct = min(100.0, cpu_pct)
                     
+                    # 2026-09-11: 只保留终端节点(.scope/.service), 过滤 user/session/app 等
+                    # cgroup 中间层级——它们是容器不是进程组, 展示出来全是层级噪音
+                    base = os.path.basename(root)
+                    if not (base.endswith(".scope") or base.endswith(".service")):
+                        continue
+                    # 会话容器本身(session-cX.scope 登录会话 / user@UID.service 用户管理器
+                    # / init.scope)也是层级, 真实应用在它们的 app.slice/服务在 system.slice 下
+                    if base.startswith("session-") or base.startswith("user@") or base == "init.scope":
+                        continue
+
                     if cpu_pct > 0.5:  # 过滤掉几乎无使用的
                         name = self._extract_name(rel_path)
                         results.append(AppPowerInfo(
                             name=name,
                             cgroup_path=rel_path,
-                            cpu_time_sec=cpu_time,
                             cpu_pct=cpu_pct,
                             power_w=0,  # 后面计算
                             pct_of_total=0,
                             is_app=self._is_graphical_app(rel_path),
+                            mem_mb=self._read_mem_mb(root),
                         ))
                         total_cpu_delta += delta
         
@@ -171,10 +188,7 @@ class AppPowerMonitor:
         results.sort(key=lambda x: x.cpu_pct, reverse=True)
         return results[:20]  # 前 20 名
     
-    def get_top_consumers(self, package_power_w: float = None, top_n: int = 10) -> List[AppPowerInfo]:
-        """获取功耗最高的前 N 个应用"""
-        results = self.scan(package_power_w)
-        return results[:top_n]
+
 
 
 # 全局单例

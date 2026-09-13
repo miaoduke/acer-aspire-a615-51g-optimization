@@ -4,7 +4,7 @@
 # 场景: ac-perf ac-bal ac-quiet bat-save bat-bal bat-perf status bench
 # 修正: BAT/AC自动检测(ACAD/BAT1), 温度第4列, C-State按真实名称(无C5), PL1钳制警告
 
-BENCH="$(cd "$(dirname "$0")" && pwd)/bench"  # 相对路径(可放脚本同目录, 不存在则 bench 子命令报错)
+BENCH="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)/bench"  # readlink: 经 sc-* 别名调用时解析真实位置
 RAPL="/sys/class/powercap/intel-rapl:0"
 PL1_MAX=$(cat $RAPL/constraint_0_max_power_uw 2>/dev/null)
 PL2_MAX=$(cat $RAPL/constraint_1_max_power_uw 2>/dev/null)
@@ -128,14 +128,14 @@ apply_scene() {
 
     case "$scene" in
         ac-perf)
-            powerprofilesctl set performance 2>/dev/null
+            systemctl is-active power-profiles-daemon >/dev/null 2>&1 && powerprofilesctl set performance
             echo "插电高性能模式"
             echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
             echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
             set_rapl 25000000 25000000
             set_turbo 0
             set_cstate C1E
-            sudo systemctl stop thermald 2>/dev/null
+            systemctl is-active thermald >/dev/null 2>&1 && sudo systemctl stop thermald
             set_wifi_pm off
             set_usb_as -1
             echo "✓ 已切换到插电高性能模式 (PL1=25W, Governor=performance)"
@@ -143,35 +143,35 @@ apply_scene() {
             ;;
 
         ac-bal)
-            powerprofilesctl set balanced 2>/dev/null
+            systemctl is-active power-profiles-daemon >/dev/null 2>&1 && powerprofilesctl set balanced
             echo "插电平衡模式"
             echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
             echo balance_performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
             set_rapl 15000000 25000000
             set_turbo 0
             set_cstate C3
-            sudo systemctl start thermald 2>/dev/null
+            systemctl is-active thermal-guard >/dev/null 2>&1 || sudo systemctl start thermald 2>/dev/null || true
             set_wifi_pm off
             set_usb_as 2
             echo "✓ 已切换到插电平衡模式 (PL1=15W, EPP=balance_performance)"
             ;;
 
         ac-quiet)
-            powerprofilesctl set balanced 2>/dev/null
+            systemctl is-active power-profiles-daemon >/dev/null 2>&1 && powerprofilesctl set balanced
             echo "插电静音模式"
             echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
             echo balance_power | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
             set_rapl 10000000 15000000
             set_turbo 0
             set_cstate C6
-            sudo systemctl start thermald 2>/dev/null
+            systemctl is-active thermal-guard >/dev/null 2>&1 || sudo systemctl start thermald 2>/dev/null || true
             set_wifi_pm on
             set_usb_as 2
             echo "✓ 已切换到插电静音模式 (PL1=10W, EPP=balance_power)"
             ;;
 
         bat-save)
-            powerprofilesctl set power-saver 2>/dev/null
+            systemctl is-active power-profiles-daemon >/dev/null 2>&1 && powerprofilesctl set power-saver
             echo "离电省电模式"
             echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
             echo power | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
@@ -185,7 +185,7 @@ apply_scene() {
             ;;
 
         bat-bal)
-            powerprofilesctl set power-saver 2>/dev/null
+            systemctl is-active power-profiles-daemon >/dev/null 2>&1 && powerprofilesctl set power-saver
             echo "离电均衡模式"
             echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
             echo balance_power | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
@@ -198,7 +198,7 @@ apply_scene() {
             ;;
 
         bat-perf)
-            powerprofilesctl set balanced 2>/dev/null
+            systemctl is-active power-profiles-daemon >/dev/null 2>&1 && powerprofilesctl set balanced
             echo "离电性能模式(⚠️受固件限制,实际PL1≈8W/1.6GHz)"
             echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor > /dev/null
             echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
@@ -218,7 +218,7 @@ apply_scene() {
             fi
             echo "测试条件: 8线程 LCG 20秒满载"
             T0=$(date +%H:%M:%S.%3N)
-            RES=$($BENCH)
+            RES=$("$BENCH")  # 引号: 项目路径含空格, 裸 $BENCH 会被拆词(2026-09-11 修复)
             T1=$(date +%H:%M:%S.%3N)
             ITERS=$(echo "$RES" | awk '/^total=/{sub("total=","");print}')
             KPS=$(awk "BEGIN{printf \"%.1f\", $ITERS/20/10000}")

@@ -122,7 +122,8 @@ def write_default_config():
 
 
 if __name__ == '__main__':
-    # 调试入口
+    # install.sh H1 调用此入口: 不存在则生成默认配置（幂等），再打印
+    write_default_config()
     cfg = Config.get()
     print("当前配置:")
     print(cfg.dump())

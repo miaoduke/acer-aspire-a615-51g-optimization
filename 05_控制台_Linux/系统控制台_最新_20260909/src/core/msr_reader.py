@@ -99,12 +99,17 @@ class SystemThrottleStatus:
 
 class MSRReader:
     """安全的只读 MSR 读取器
-    
-    ponytail: sudo rdmsr 每核心一次开销大且凭据过期时产生认证风暴，
-    缓存 60s + 凭据失效熔断（连续失败即停止调用直到手动重置）。
+
+    ponytail: read_all 走 sudo -n rdmsr -a 单次全核读(免密白名单)。
+    简化: 缓存 10s + 连续失败 3 次熔断(带 60s 自动恢复探测)。
+    (2026-09-13 upgrade 已执行: CACHE_SEC 60→10, 原密码风暴动因随免密消失;
+     熔断从"直到手动重置"改为 60s 半程试探自动恢复)
+    ceiling: 限流状态最长滞后 10s；熔断期间时间轴显示旧数据(角标可见,见 dashboard)。
+    upgrade: 若需真秒级, 把 GUI tick 内 read_all 旁路缓存; 熔断角标已实装。
     """
-    
-    CACHE_SEC = 60
+
+    CACHE_SEC = 10
+    BREAKER_PROBE_SEC = 60   # 熔断后每 60s 半程试探一次(成功即复位)
     FAIL_BREAKER = 3  # 连续失败 N 次后熔断
     
     # MSR 寄存器定义
@@ -135,6 +140,7 @@ class MSRReader:
         self._cache_status: Optional[SystemThrottleStatus] = None
         self._consecutive_fails: int = 0
         self._breaker_open: bool = False
+        self._breaker_since: float = 0  # 熔断打开时刻(自动恢复探测用)
     
     def _check_msr_access(self) -> bool:
         """检查 MSR 访问权限"""
@@ -223,17 +229,22 @@ class MSRReader:
         return ThrottleStatus(core=core, active=len(types) > 0, types=types)
     
     def read_all(self) -> SystemThrottleStatus:
-        """读取全系统限流状态（60s 缓存 + 失败熔断，防止 sudo 风暴）"""
+        """读取全系统限流状态（10s 缓存 + 失败熔断，熔断带 60s 自动恢复探测）"""
         import time
         now = time.time()
-        
-        # 熔断打开：直接返回缓存/空状态
+
+        # 熔断打开：每 BREAKER_PROBE_SEC 半程试探一次，成功即复位（2026-09-13:
+        # 免密白名单下失败已不产生密码弹窗，"直到手动重置"的设计随之退役）
         if self._breaker_open:
-            if self._cache_status:
-                return self._cache_status
-            return SystemThrottleStatus(
-                cores=[ThrottleStatus(core=i, active=False, types=[]) for i in range(self._num_cores)],
-                pl1_active=False, pl2_active=False, bd_prochot_active=False, timestamp=now)
+            if now - self._breaker_since < self.BREAKER_PROBE_SEC:
+                if self._cache_status:
+                    return self._cache_status
+                return SystemThrottleStatus(
+                    cores=[ThrottleStatus(core=i, active=False, types=[]) for i in range(self._num_cores)],
+                    pl1_active=False, pl2_active=False, bd_prochot_active=False, timestamp=now)
+            # 探测窗口到：清计数落回正常路径试读一次（失败会重新熔断并重置计时）
+            self._consecutive_fails = 0
+            self._breaker_open = False
         
         # 缓存有效：直接返回
         if now - self._cache_ts < self.CACHE_SEC and self._cache_status:
@@ -241,16 +252,18 @@ class MSRReader:
         
         # 实际读取（一次 sudo 批量读所有核心）
         try:
-            # 单次 sudo 批量执行所有核心的 rdmsr（避免 N 次子进程）
-            cmd = ["sudo", "-n", "bash", "-c",
-                   " ".join(f"rdmsr -p {i} 0x{self.IA32_THERM_STATUS:X};"
-                            for i in range(self._num_cores))]
-            r = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            # rdmsr -a 单次读所有核心（输出按核序，一行一核）
+            # 旧写法 sudo bash -c 'rdmsr; rdmsr...' 在 sudoers 白名单下永远不匹配
+            # （sudo 记录的是 /usr/bin/bash）→ 认证风暴；-a 直读免密通过
+            r = subprocess.run(["sudo", "-n", "rdmsr", "-a",
+                                f"0x{self.IA32_THERM_STATUS:X}"],
+                               capture_output=True, text=True, timeout=10)
             
             if r.returncode != 0 or "密码" in (r.stderr or "") or "password" in (r.stderr or "").lower():
                 self._consecutive_fails += 1
                 if self._consecutive_fails >= self.FAIL_BREAKER:
                     self._breaker_open = True  # 熔断：停止后续调用
+                    self._breaker_since = now   # 记录打开时刻, 60s 后自动试探恢复
                 if self._cache_status:
                     return self._cache_status
                 return SystemThrottleStatus(
@@ -301,6 +314,7 @@ class MSRReader:
             self._consecutive_fails += 1
             if self._consecutive_fails >= self.FAIL_BREAKER:
                 self._breaker_open = True
+                self._breaker_since = time.time()  # 与主路径同步: 记录打开时刻供探测复位
             if self._cache_status:
                 return self._cache_status
             return SystemThrottleStatus(
@@ -340,6 +354,11 @@ def get_msr_reader() -> MSRReader:
 def get_throttle_status() -> SystemThrottleStatus:
     """获取当前限流状态（供 GUI 调用）"""
     return get_msr_reader().read_all()
+
+
+def is_breaker_open() -> bool:
+    """MSR 读取熔断是否处于打开状态（供 GUI 角标，2026-09-13 upgrade 实装）"""
+    return get_msr_reader()._breaker_open
 
 
 def get_power_limits() -> Dict[str, float]:

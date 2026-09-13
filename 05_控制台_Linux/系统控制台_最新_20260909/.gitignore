@@ -19,6 +19,11 @@ data/console.log
 data/snapshot_log.txt
 data/snapshots/
 data/battery_usage.json
+# adapt_test.sh 探测产物（机型/内核/温度分区路径，机器特定）
+data/hardware_profile.json
+
+# 工具 venv（install.sh 0c 自动 pip 安装 undervolt 的 .venv-tools，重装即重建）
+.venv-tools/
 
 # 备份产物（历史快照，git 管理后由历史取代）
 .deploy_backup_*/

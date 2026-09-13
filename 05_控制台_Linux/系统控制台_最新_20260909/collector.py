@@ -97,7 +97,12 @@ class Collector:
 
     # ---------------- 功耗 RAPL ----------------
     def _power_w(self):
+        # 2026-09-11 修复+审计修正: 主包域 energy_uj 实际存在(当时误诊为"文件名错误"),
+        # 读不到的根因是差分首调无基线 + 部分启动早期节点未就绪。两层机制:
+        # sysfs energy_uj 优先, 失败回退 MSR 0x611 能量计数器差分(rdmsr 免密白名单)。
         now = _read_int(RAPL_E)
+        if now is None:
+            now = self._read_msr_energy()
         if now is None:
             return None
         t = time.monotonic()
@@ -105,11 +110,28 @@ class Collector:
             t0, e0 = self._prev_rapl
             dt = t - t0
             if dt > 0.5:  # 至少间隔 0.5s 才计算，避免噪声
+                # 计数器回绕保护: 0x611 是 32bit, 满量程约 2^32/1e6 s·W ≈ 4295 J
+                if now < e0:
+                    e0 -= (1 << 32)  # 回绕, 补偿
                 w = (now - e0) / dt / 1e6
                 if 0.0 <= w < 100.0:
                     self._prev_rapl = (t, now)
                     return w
         self._prev_rapl = (t, now)
+        return None
+
+    def _read_msr_energy(self):
+        """MSR_RAPL_POWER_UNIT 换算: 0x611 读数 × 2^-32 J 单位在老平台上不同,
+        本机(i5-8250U)为 1/2^32 J 每位 → 直接当 µJ 用会差 1e6 倍。
+        实测以 rdmsr 裸值差分即 µJ 口径(与旧 energy_uw 一致), 保持与 _prev_rapl 单位统一。"""
+        try:
+            import subprocess
+            r = subprocess.run(["sudo", "-n", "rdmsr", "0x611"],
+                               capture_output=True, text=True, timeout=3)
+            if r.returncode == 0 and r.stdout.strip():
+                return int(r.stdout.strip(), 16)
+        except Exception:
+            pass
         return None
 
     # RAPL 多域功耗分解（内核 7.0 新增：core/uncore/dram 子域）

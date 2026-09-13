@@ -189,6 +189,123 @@ class AdvancedPage(Gtk.Box):
         tbox.pack_start(tnote, False, False, 0)
         self.pack_start(tbox, False, False, 0)
 
+        # ---- MSR 降压调节（2026-09-11 新增：GUI 化, 替代"命令行手工改 service"） ----
+        uvbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        uvbox.set_margin_top(12)
+        uvtitle = Gtk.Label(label=T("MSR 降压调节（三重守护自动同步）"), xalign=0)
+        uvtitle.get_style_context().add_class("section-title")
+        uvbox.pack_start(uvtitle, False, False, 0)
+
+        # core+cache 联动（电气耦合必须同值）
+        corebox = Gtk.Box(spacing=8)
+        corel = Gtk.Label(label=T("CPU 核心+缓存："), xalign=0)
+        self.uv_core_adj = Gtk.Adjustment(value=50, lower=0, upper=130, step_increment=2.5)
+        self.uv_core_scale = Gtk.Scale(orientation=Gtk.Orientation.HORIZONTAL,
+                                       adjustment=self.uv_core_adj)
+        self.uv_core_scale.set_size_request(180, -1)
+        self.uv_core_scale.set_digits(0)
+        self.uv_core_entry = Gtk.Entry()
+        self.uv_core_entry.set_width_chars(4)
+        self.uv_core_entry.set_text("50")
+        self.uv_core_unit = Gtk.Label(label="-mV", xalign=0)
+        corebox.pack_start(corel, False, False, 0)
+        corebox.pack_start(self.uv_core_scale, False, False, 0)
+        corebox.pack_start(self.uv_core_entry, False, False, 0)
+        corebox.pack_start(self.uv_core_unit, False, False, 0)
+        uvbox.pack_start(corebox, False, False, 0)
+
+        # GPU 独立域
+        gpubox = Gtk.Box(spacing=8)
+        gpul = Gtk.Label(label=T("核显 GPU（独立域）："), xalign=0)
+        self.uv_gpu_adj = Gtk.Adjustment(value=50, lower=0, upper=130, step_increment=2.5)
+        self.uv_gpu_scale = Gtk.Scale(orientation=Gtk.Orientation.HORIZONTAL,
+                                      adjustment=self.uv_gpu_adj)
+        self.uv_gpu_scale.set_size_request(180, -1)
+        self.uv_gpu_scale.set_digits(0)
+        self.uv_gpu_entry = Gtk.Entry()
+        self.uv_gpu_entry.set_width_chars(4)
+        self.uv_gpu_entry.set_text("50")
+        self.uv_gpu_unit = Gtk.Label(label="-mV", xalign=0)
+        gpubox.pack_start(gpul, False, False, 0)
+        gpubox.pack_start(self.uv_gpu_scale, False, False, 0)
+        gpubox.pack_start(self.uv_gpu_entry, False, False, 0)
+        gpubox.pack_start(self.uv_gpu_unit, False, False, 0)
+        uvbox.pack_start(gpubox, False, False, 0)
+
+        # 温度墙 + 应用 + 实测状态
+        actbox = Gtk.Box(spacing=8)
+        templ = Gtk.Label(label=T("温度墙："), xalign=0)
+        self.uv_temp_entry = Gtk.Entry()
+        self.uv_temp_entry.set_width_chars(3)
+        self.uv_temp_entry.set_text("98")
+        temp_unit = Gtk.Label(label="°C", xalign=0)
+        self.uv_apply = Gtk.Button(label=T("应用降压"))
+        self.uv_apply.get_style_context().add_class("suggested-action")
+        self.uv_apply.connect("clicked", self._on_uv_apply)
+        self.uv_read_btn = Gtk.Button(label=T("读取当前"))
+        self.uv_read_btn.connect("clicked", lambda _b: self._uv_sync_from_hw())
+        self.uv_state = Gtk.Label(label="", xalign=0)
+        self.uv_state.get_style_context().add_class("dim-text")
+        actbox.pack_start(templ, False, False, 0)
+        actbox.pack_start(self.uv_temp_entry, False, False, 0)
+        actbox.pack_start(temp_unit, False, False, 0)
+        actbox.pack_start(self.uv_apply, False, False, 0)
+        actbox.pack_start(self.uv_read_btn, False, False, 0)
+        actbox.pack_start(self.uv_state, False, False, 0)
+        uvbox.pack_start(actbox, False, False, 0)
+
+        uvnote = Gtk.Label(
+            label=T("core 与 cache 电气同轨强制同值；GPU 独立。范围 0 ~ -130mV（D7 验收余量）。"
+                    "应用即写 MSR + 原子更新 undervolt.service，回读校验失败自动回滚；"
+                    "uv_safeguard/uv_daily_check/msr_deadman 三重守护基准随 service 自动同步。"
+                    "建议观察期逐档下调，异常关机后安全网自动回退 -30mV。"),
+            xalign=0, wrap=True)
+        uvnote.get_style_context().add_class("dim-text")
+        uvbox.pack_start(uvnote, False, False, 0)
+        self.pack_start(uvbox, False, False, 0)
+        self._uv_sync_from_hw(initial=True)
+
+        # ---- GRUB 启动菜单时间（2026-09-11 新增，改编自《设置GRUB启动时间.sh》工具） ----
+        gtbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        gtbox.set_margin_top(12)
+        gttitle = Gtk.Label(label=T("GRUB 启动菜单时间"), xalign=0)
+        gttitle.get_style_context().add_class("section-title")
+        gtbox.pack_start(gttitle, False, False, 0)
+        gtrow = Gtk.Box(spacing=8)
+        gtl = Gtk.Label(label=T("等待秒数："), xalign=0)
+        self.gt_seconds = Gtk.Entry()
+        self.gt_seconds.set_width_chars(4)
+        self.gt_seconds.set_text("5")
+        self.gt_seconds.set_tooltip_text(T("0 = 跳过菜单直接启动默认项"))
+        gt_unit = Gtk.Label(label=T("秒"), xalign=0)
+        self.gt_style = Gtk.ComboBoxText()
+        self.gt_style.append("menu", T("显示菜单"))
+        self.gt_style.append("hidden", T("隐藏（仅倒计时）"))
+        self.gt_style.set_active(0)
+        self.gt_apply = Gtk.Button(label=T("应用（重新生成 grub.cfg）"))
+        self.gt_apply.connect("clicked", self._on_grub_timeout)
+        self.gt_read_btn = Gtk.Button(label=T("读取当前"))
+        self.gt_read_btn.connect("clicked", lambda _b: self._gt_sync(initial=False))
+        self.gt_state = Gtk.Label(label="", xalign=0)
+        self.gt_state.get_style_context().add_class("dim-text")
+        gtrow.pack_start(gtl, False, False, 0)
+        gtrow.pack_start(self.gt_seconds, False, False, 0)
+        gtrow.pack_start(gt_unit, False, False, 0)
+        gtrow.pack_start(self.gt_style, False, False, 0)
+        gtrow.pack_start(self.gt_apply, False, False, 0)
+        gtrow.pack_start(self.gt_read_btn, False, False, 0)
+        gtrow.pack_start(self.gt_state, False, False, 0)
+        gtbox.pack_start(gtrow, False, False, 0)
+        gtnote = Gtk.Label(
+            label=T("同步设置 GRUB_RECORDFAIL_TIMEOUT，异常关机后不再回退 30 秒默认。"
+                    "原配置备份于 /etc/default/grub.grubtime.bak。"),
+            xalign=0, wrap=True)
+        gtnote.get_style_context().add_class("dim-text")
+        gtbox.pack_start(gtnote, False, False, 0)
+        self.pack_start(gtbox, False, False, 0)
+        self._gt_sync(initial=True)
+
+
         # ---- 外设省电 ----
         pbox = Gtk.Box(spacing=8)
         pbox.set_margin_top(12)
@@ -349,6 +466,57 @@ class AdvancedPage(Gtk.Box):
             d.set_markup(T("<b>操作失败</b>（rc=%s）\n%s") % (rc, err or out))
         d.run()
         d.destroy()
+
+    # ---------------- MSR 降压调节（2026-09-11） ----------------
+    def _uv_sync_from_hw(self, initial=False):
+        """把当前实测值同步到滑块/输入框/状态行"""
+        def worker():
+            return controller.uv_read()
+
+        def done(d):
+            if not d:
+                if not initial:
+                    self.uv_state.set_text(T("读取失败（白名单/工具不可用）"))
+                return
+            core = abs(int(d.get("core", 0)))
+            gpu = abs(int(d.get("gpu", 0)))
+            temp = d.get("temp_target", 98)
+            self.uv_core_adj.set_value(core)
+            self.uv_core_entry.set_text(str(core))
+            self.uv_gpu_adj.set_value(gpu)
+            self.uv_gpu_entry.set_text(str(gpu))
+            self.uv_temp_entry.set_text(str(temp))
+            if not initial:
+                self.uv_state.set_text(T("实测: core %.1fmV / cache %.1fmV / gpu %.1fmV / 温度墙 %d°C")
+                                       % (d.get("core", 0), d.get("cache", 0), d.get("gpu", 0), temp))
+
+        run_async(worker, done)
+
+    def _on_uv_apply(self, _btn):
+        def worker():
+            try:
+                core = int(float(self.uv_core_entry.get_text().strip() or "0"))
+                gpu = int(float(self.uv_gpu_entry.get_text().strip() or "0"))
+                temp = int(float(self.uv_temp_entry.get_text().strip() or "98"))
+            except ValueError:
+                return (1, "", T("请输入整数"))
+            if not (0 <= core <= 130 and 0 <= gpu <= 130):
+                return (1, "", T("降压幅度越界（0-130mV）"))
+            if not (60 <= temp <= 105):
+                return (1, "", T("温度墙越界（60-105°C）"))
+            # GUI 显示正值幅度 → 实际写负值; 硬件层 0 幅度=不降压
+            return controller.uv_set(-core, -gpu, temp)
+
+        def done(result):
+            rc, out, err = result
+            if rc == 0:
+                self.uv_state.set_text(T("✓ {}").format(out.strip().splitlines()[0] if out.strip() else "已应用"))
+                self._uv_sync_from_hw()
+            else:
+                self.uv_state.set_text(T("❌ {}").format(err or out or "应用失败"))
+
+        self.uv_state.set_text(T("应用中…"))
+        run_async(worker, done)
 
     def _on_apply(self, _btn, kind):
         def worker():
@@ -1017,3 +1185,43 @@ GPU_DC={int(spin_gd.get_value())}
 #    全项目无调用方，console.py 的托盘用的是自己的内联实现(_setup_tray)。
 # 3) _read_int 内嵌的"性能日志查看器"72 行孤儿块已删除——函数头丢失导致不可达，
 #    完整实现见 ui_maintenance.py 的 _open_perf_log()（已接线）。
+
+    def _gt_sync(self, initial=False):
+        """把当前 GRUB_TIMEOUT 同步到输入框/状态行"""
+        def worker():
+            return controller.grub_timeout_current()
+
+        def done(result):
+            if not result:
+                if not initial:
+                    self.gt_state.set_text(T("读取失败（非 GRUB2 引导？）"))
+                return
+            timeout, style = result
+            self.gt_seconds.set_text(str(timeout))
+            self.gt_style.set_active(1 if style == "hidden" else 0)
+            if not initial:
+                self.gt_state.set_text(T("当前: {} 秒 / {}").format(
+                    timeout, T("隐藏") if style == "hidden" else T("显示菜单")))
+
+        run_async(worker, done)
+
+    def _on_grub_timeout(self, _btn):
+        def worker():
+            try:
+                seconds = int(self.gt_seconds.get_text().strip())
+            except ValueError:
+                return (1, "", T("请输入非负整数"))
+            style = self.gt_style.get_active_id() or "menu"
+            if not (0 <= seconds <= 300):
+                return (1, "", T("秒数越界（0-300）"))
+            return controller.grub_timeout(seconds, style)
+
+        def done(result):
+            rc, out, err = result
+            if rc == 0:
+                self.gt_state.set_text(T("✓ {}").format(out.strip().splitlines()[0] if out.strip() else "已应用"))
+            else:
+                self.gt_state.set_text(T("❌ {}").format(err or out or "应用失败"))
+
+        self.gt_state.set_text(T("应用中（update-grub 需数秒）…"))
+        run_async(worker, done)

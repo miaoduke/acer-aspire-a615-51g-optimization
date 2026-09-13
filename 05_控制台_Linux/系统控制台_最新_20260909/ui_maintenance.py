@@ -6,6 +6,8 @@
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
+import os
+import time  # 2026-09-11 修复: 498 行 time.strftime 用了但从未 import(被上层类型错误掩盖至今)
 
 from async_util import run_async
 import controller
@@ -70,6 +72,15 @@ class MaintenancePage(Gtk.Box):
         sl = Gtk.Label(label=T("优化栈服务状态"), xalign=0)
         sl.get_style_context().add_class("section-title")
         sbox.pack_start(sl, False, False, 0)
+        # 开机自启开关（2026-09-11 新增：控制 ~/.config/autostart/system-console.desktop）
+        self.autostart_switch = Gtk.Switch()
+        self.autostart_switch.set_tooltip_text(T("开机自动启动系统控制台"))
+        self.autostart_switch.set_state(self._autostart_enabled())
+        # state=实际状态, active=用户可见状态; set_state 而非 set_active 避免触发信号
+        al = Gtk.Label(label=T("控制台开机自启："), xalign=0)
+        sbox.pack_end(self.autostart_switch, False, False, 0)
+        sbox.pack_end(al, False, False, 0)
+        self.autostart_switch.connect("state-set", self._on_autostart_toggle)
         self.svc_refresh = Gtk.Button(label=T("刷新"))
         self.svc_refresh.connect("clicked", lambda _b: self._load_services())
         sbox.pack_end(self.svc_refresh, False, False, 0)
@@ -301,6 +312,37 @@ class MaintenancePage(Gtk.Box):
         run_async(worker, done)
 
     # ---------------- 服务 ----------------
+    # ---------------- 开机自启开关 ----------------
+    AUTOSTART_DESKTOP = os.path.expanduser("~/.config/autostart/system-console.desktop")
+
+    def _autostart_enabled(self):
+        return os.path.isfile(self.AUTOSTART_DESKTOP)
+
+    def _on_autostart_toggle(self, _sw, state):
+        """开关切换：写/删 ~/.config/autostart/system-console.desktop（与 install.sh [7/7] 同一文件）"""
+        try:
+            if state:
+                os.makedirs(os.path.dirname(self.AUTOSTART_DESKTOP), exist_ok=True)
+                # 与 install.sh mk_desktop 保持一致(引号包路径, 空格安全)
+                exe = os.path.join(controller.BASE, "启动控制台.sh")
+                with open(self.AUTOSTART_DESKTOP, "w") as f:
+                    f.write("[Desktop Entry]\nType=Application\nName=系统控制台\n"
+                           f'Exec="{exe}"\nPath={controller.BASE}\n'
+                           "Icon=utilities-system-monitor\nTerminal=false\n"
+                           "X-GNOME-Autostart-enabled=true\n")
+            else:
+                if os.path.isfile(self.AUTOSTART_DESKTOP):
+                    os.remove(self.AUTOSTART_DESKTOP)
+            self.autostart_switch.set_state(state)  # 确认状态(失败路径不会走到这)
+        except OSError as e:
+            self.autostart_switch.set_state(not state)  # 回滚显示
+            dlg = Gtk.MessageDialog(transient_for=self.get_toplevel(), modal=True,
+                                    message_type=Gtk.MessageType.ERROR,
+                                    buttons=Gtk.ButtonsType.OK)
+            dlg.set_markup(T("自启开关操作失败：%s") % e)
+            dlg.run(); dlg.destroy()
+        return True  # 阻止默认 handler 再改一次状态
+
     def _load_services(self):
         def worker():
             # 2026-09-08 审计 A1：附带 safeguard verdict（降压安全网状态，此前仅终端可查）
@@ -360,7 +402,8 @@ class MaintenancePage(Gtk.Box):
         def worker():
             # 2026-09-01 修复: 原硬编码桌面旧路径(已删) → sudo 白名单不匹配报"需要密码"且不弹窗。
             # 改用 controller._find_script 自动定位 + _run 统一弹窗提权(白名单未配时也能授权执行)。
-            script = controller._find_script("backend", "kernel_guard.sh")
+            # 2026-09-11 修复: 含空格原路径 sudoers 仍不匹配 → 经 _alias_script 走 /usr/local/bin 别名。
+            script = controller._alias_script(controller._find_script("backend", "kernel_guard.sh"), "sc-kernel-guard.sh")
             return controller._run([script, mode], timeout=120)
 
         def done(result):
@@ -423,8 +466,13 @@ class MaintenancePage(Gtk.Box):
         box.pack_start(sw, True, True, 0)
 
         def load_data(_btn=None):
+            # 2026-09-11 修复: 原同步加载在主线程跑全量 TSV(7 天档几千行遍历+排序),
+            # GTK 主循环冻结 → 对话框/主窗都关不掉。改 run_async 后台加载(与维护页
+            # 其他按钮同模式), 先显示提示文案。
             hours = float(combo.get_active_id() or 1)
-            try:
+            buf.set_text(T("加载中（{}h）…").format(hours))
+
+            def worker():
                 from src.core.perf_logger import get_perf_history, get_perf_stats
                 hist = get_perf_history(hours)
                 stats = get_perf_stats(hours)
@@ -464,9 +512,17 @@ class MaintenancePage(Gtk.Box):
                         f"{ts}  {d.get('cpu_freq_max', 0):.0f}MHz  {d.get('cpu_temp', 0):.0f}°C  "
                         f"{d.get('pkg_w', 0):.1f}W  {status}"
                     )
-                buf.set_text("\n".join(lines))
-            except Exception as e:
-                buf.set_text(T("加载失败: {}\n可能尚未有性能数据记录").format(e))
+                return "\n".join(lines)
+
+            def done(result):
+                # run_async 出错时返回 (rc, out, err) 元组
+                if isinstance(result, tuple):
+                    buf.set_text(T("加载失败: {}\n可能尚未有性能数据记录").format(
+                        result[2] if len(result) > 2 else result))
+                else:
+                    buf.set_text(result)
+
+            run_async(worker, done)
 
         refresh_btn.connect("clicked", load_data)
         combo.connect("changed", load_data)
@@ -490,13 +546,20 @@ class MaintenancePage(Gtk.Box):
         note.get_style_context().add_class("dim-text")
         box.pack_start(note, False, False, 0)
 
-        store = Gtk.ListStore(str, float, float, float, str)
+        store = Gtk.ListStore(str, float, float, float, float, str)
         tree = Gtk.TreeView(model=store, enable_grid_lines=True)
 
-        for i, (title, xalign) in enumerate([(T("应用"), 0.0), ("CPU %", 1.0), (T("功耗 W"), 1.0), (T("占比 %"), 1.0), (T("类型"), 0.5)]):
+        for i, (title, xalign) in enumerate([(T("应用"), 0.0), ("CPU %", 1.0), (T("功耗 W"), 1.0), (T("占比 %"), 1.0), (T("内存 MB"), 1.0), (T("类型"), 0.5)]):
             cell = Gtk.CellRendererText()
             cell.set_property("xalign", xalign)
             col = Gtk.TreeViewColumn(title, cell, text=i)
+            # 2026-09-11: float 列直接 str() 渲染会露浮点长尾(0.09335814...)
+            # → cell_data_func 统一定点格式: CPU%/占比 1 位, 功耗 2 位, 内存整数
+            _fmt = ["", "%.1f", "%.2f", "%.1f", "%.0f", ""][i]
+            if _fmt:
+                def _fmt_cell(_col, _cell, model, it, f=_fmt):
+                    _cell.set_property("text", f % model.get_value(it, _col.get_sort_column_id()))
+                col.set_cell_data_func(cell, _fmt_cell)
             col.set_sort_column_id(i)
             col.set_resizable(True)
             if i > 0:
@@ -521,14 +584,19 @@ class MaintenancePage(Gtk.Box):
         box.pack_start(btn_row, False, False, 0)
 
         auto_id = [0]
+        # 2026-09-11 修复: 原每次 refresh 新建 Collector → RAPL 差分永远没有基线,
+        # power_w 恒 None → 功耗/占比列永远空。差分必须同一实例前后两次采样,
+        # 对话框级复用(与 app_power 模块级单例 monitor 同理)。
+        _collector = [None]
 
         def refresh(_btn=None):
             try:
                 pw = None
                 try:
                     from collector import Collector
-                    c = Collector()
-                    d = c.sample()
+                    if _collector[0] is None:
+                        _collector[0] = Collector()
+                    d = _collector[0].sample()
                     pw = d.get("power_w")
                 except Exception:
                     pass
@@ -540,13 +608,13 @@ class MaintenancePage(Gtk.Box):
                 for r in results:
                     typ = T("图形应用") if r.is_app else T("服务/后台")
                     store.append([r.name, round(r.cpu_pct, 1), round(r.power_w, 2),
-                                  round(r.pct_of_total, 1), typ])
+                                  round(r.pct_of_total, 1), round(r.mem_mb, 0), typ])
 
                 if pw:
                     pkg_label.set_text(T("整机功耗: {:.1f}W").format(pw))
             except Exception as e:
                 store.clear()
-                store.append([T("加载失败: {}").format(e), 0, 0, 0, ""])
+                store.append([T("加载失败: {}").format(e), 0, 0, 0, 0, ""])
 
         def toggle_auto(_btn):
             if auto_check.get_active():
@@ -563,6 +631,10 @@ class MaintenancePage(Gtk.Box):
 
         dlg.show_all()
         refresh()
+        # 2026-09-11 修复: 缺 dlg.run() 模态循环 → _open_app_power 返回后 dlg 失去
+        # 引用被 GC, 对话框闪现即灭/交互异常(性能日志对话框有 run(), 这个漏了)
+        dlg.run()
+        dlg.destroy()
 
     # ---------------- MCE ----------------
     def _on_mce(self, _btn):

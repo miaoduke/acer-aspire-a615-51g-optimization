@@ -685,6 +685,18 @@ class DocumentationPage(Gtk.Box):
         box.pack_start(self._bullet("亮度：直接写入 /sys/class/backlight/"), False, False, 0)
         box.pack_start(self._bullet("触摸板/键盘背光：libinput 启用/禁用"), False, False, 0)
         box.pack_start(self._bullet("WMI 模块状态：acer-wmi-battery 加载检测"), False, False, 0)
+        box.pack_start(self._h2("4d. MSR 降压调节（2026-09-11 新增）"), False, False, 0)
+        box.pack_start(self._bullet("core 与 cache 电气同轨：两域在同一电压平面，强制同值联动调节"), False, False, 0)
+        box.pack_start(self._bullet("GPU 独立域：核显电压单独可调，可尝试比 core 更深档位"), False, False, 0)
+        box.pack_start(self._bullet("范围 0 ~ -130mV（D7 验收余量），温度墙 60~105°C"), False, False, 0)
+        box.pack_start(self._bullet("安全机制：应用即写 MSR + 原子更新 undervolt.service，回读校验失败自动回滚；uv_safeguard/uv_daily_check/msr_deadman 三重守护基准随 service 自动同步；挂起唤醒值同步（undervolt-resume.service）"), False, False, 0)
+        box.pack_start(self._bullet("科学调法：每档 -10mV 逐级下调 + 24h 观察期 + 基准测试验证；异常关机后安全网自动回退"), False, False, 0)
+        box.pack_start(self._bullet("全程留痕：/var/log/uv_set.log"), False, False, 0)
+        box.pack_start(self._h2("4e. GRUB 启动菜单时间（2026-09-11 新增）"), False, False, 0)
+        box.pack_start(self._bullet("等待秒数：0=跳过菜单直接启动默认项，最大 300 秒"), False, False, 0)
+        box.pack_start(self._bullet("显示方式：显示菜单 / 隐藏（仅倒计时）"), False, False, 0)
+        box.pack_start(self._bullet("自动同步 GRUB_RECORDFAIL_TIMEOUT：异常关机后不再回退 30 秒默认"), False, False, 0)
+        box.pack_start(self._bullet("原配置备份于 /etc/default/grub.grubtime.bak，可一键还原"), False, False, 0)
         box.pack_start(self._sep(), False, False, 0)
 
         # 系统维护

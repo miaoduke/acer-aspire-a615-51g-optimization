@@ -432,11 +432,13 @@ class DashboardPage(Gtk.Box):
         # 限流状态卡片更新
         if hasattr(self, 'throttle_card'):
             try:
-                from src.core.msr_reader import get_throttle_status
+                from src.core.msr_reader import get_throttle_status, is_breaker_open
                 from src.core.throttle_history import get_throttle_history
                 status = get_throttle_status()
+                # 2026-09-13 upgrade: 熔断角标 — 时间轴不再静默显示旧数据
+                badge = " <span size='small' fgcolor='#e6663a'>⚠MSR熔断·数据可能滞后</span>" if is_breaker_open() else ""
                 self.throttle_card.get_children()[1].set_markup(
-                    "<span size='x-large'>{}</span>".format(status.summary_text().replace("|", " | "))
+                    "<span size='x-large'>{}</span>{}".format(status.summary_text().replace("|", " | "), badge)
                 )
                 # G6: tooltip 加 24h 历史摘要
                 try:
