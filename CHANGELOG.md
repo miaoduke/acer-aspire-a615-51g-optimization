@@ -60,5 +60,6 @@
 **同步治理（本次提交执行）**
 - **重新脱敏 9 文件 20 处回退**（Linux 重装后从真机生产副本回灌，与上次 v1→v2.0 同步同源）：`hackdale→<USER>`（controller/config/NOT_API_WEBUI/sync 脚本/install.sh DKMS 段改用动态 `$REAL_USER`/`$REAL_HOME`）、`.desktop` 恢复运行位置占位、PKGBUILD/README 恢复真实仓库地址与占位维护者、AUR 恢复「尚未发布」声明与注释化 `yay` 示例。
 - **CI 工作流提升至仓库根** `.github/workflows/test.yml`（嵌套目录内 Actions 不执行）：`working-directory` 适配 + `python`→`python3` 修正，Actions 现已真实运行。
+- **CI run#1 审计修复（提升后首次运行即暴露两处继承缺陷）**：① `setup-python` 的 `cache:'pip'` 在无 requirements.txt 的仓库会立即失败（三个 matrix job 全部倒在 Set up Python 亚秒级）→ 移除该行；② `gi`(PyGObject) 无 wheel、apt 的 `python3-gi` 只对系统 Python 生效，setup-python 解释器装不上 → 工作流按实际依赖重构为三 job：`test`（纯 Python 矩阵 3.10/3.11/3.12：profile/integration/plugin/complete/i18n + shellcheck + safeguard 回归）、`test-gui`（系统 Python + python3-gi + Xvfb：GUI 逻辑/渲染/user-view/perf-pipeline e2e）、`lint`（run#1 已全绿验证）。
 - 嵌套 `.gitignore` 补 `.venv-tools/` 与 `data/hardware_profile.json`（adapt_test.sh 探测产物）。
 - 根 README 双语更新：09-13 重装恢复通告、定稿表（内核 31、-100mV 复验收、SAFE_MV 80、降压 GUI 节）、第 6 节新特性清单。

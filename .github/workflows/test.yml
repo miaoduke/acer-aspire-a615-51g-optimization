@@ -6,8 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
+# 目录与依赖说明（2026-09-13 审计 run#1 修复）:
+# - 控制台位于嵌套目录, 所有 job 用 defaults.run.working-directory 定位
+#   （run#1 的 lint job 已验证该写法可用）
+# - 不启用 setup-python 的 cache:'pip' — 仓库无 requirements.txt,
+#   缓存键计算会立即失败（run#1 三 matrix 全部倒在此步）
+# - gi(PyGObject) 无 wheel, apt 的 python3-gi 只对系统 Python 生效,
+#   setup-python 的解释器装不上 → GUI 测试走独立 job 用系统 python3
+
 jobs:
   test:
+    # 纯 Python 测试（无 GTK/gi 依赖）: profile/plugin/i18n/controller/config
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,12 +32,6 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'pip'
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libgtk-3-0 gir1.2-gtk-3.0 xvfb
 
     - name: Install Python dependencies
       run: |
@@ -44,14 +47,13 @@ jobs:
     - name: Run plugin tests
       run: python3 tests/test_phase2_plugin.py
 
-    - name: Run GUI logic tests
-      run: python3 tests/test_phase2_gui.py
-
-    - name: Run GUI render tests (Xvfb)
-      run: xvfb-run -a python3 tests/test_phase2_gui_render.py
-
     - name: Run complete tests
       run: python3 tests/test_phase2_complete.py
+
+    - name: Run i18n tests
+      run: |
+        python3 tests/test_p1_i18n_apply.py
+        python3 tests/test_p2_i18n.py
 
     - name: Run shellcheck (if available)
       run: |
@@ -66,6 +68,33 @@ jobs:
 
     - name: Validate install.sh syntax
       run: bash -n install.sh
+
+  test-gui:
+    # GUI 测试（需要 gi/PyGObject + Xvfb）: 用系统 Python（python3-gi 只装给它）
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 05_控制台_Linux/系统控制台_最新_20260909
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install GTK + PyGObject (system python)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-0 gir1.2-gtk-3.0 python3-gi xvfb
+
+    - name: Run GUI logic tests
+      run: python3 tests/test_phase2_gui.py
+
+    - name: Run GUI render tests (Xvfb)
+      run: xvfb-run -a python3 tests/test_phase2_gui_render.py
+
+    - name: Run user-view e2e tests
+      run: python3 tests/test_e2e_user_view.py
+
+    - name: Run perf-pipeline e2e tests
+      run: python3 tests/test_e2e_perf_pipeline.py
 
   lint:
     runs-on: ubuntu-latest
